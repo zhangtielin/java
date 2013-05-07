@@ -4,89 +4,80 @@ import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubException;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
 
 public class PubnubDemoConsole {
 
 
-    public static void main(String[] args) throws PubnubException {
+    public static Callback OurCallback = new Callback() {
+        public void connectCallback(String channel, Object message) {
+            System.out.println("Connected to channel " + channel);
+        }
 
-        Pubnub pn;
+        public void disconnectCallback(String channel, Object message) {
+            System.out.println("Disconnected from channel " + channel);
+
+        }
+
+        public void reconnectCallback(String channel, Object message) {
+            System.out.println("Reconnected to channel channel " + channel);
+
+        }
+
+        public void successCallback(String channel, Object message) {
+            System.out.println("Message from channel channel " + channel + " : " + message.toString());
+
+        }
+
+        public void errorCallback(String channel, Object message) {
+            if (message.toString().equals("")) {
+                System.out.println("Channel channel " + channel + " assumed disconnected");
+            } else {
+                System.out.println("Error on channel " + channel);
+            }
+        }
+    };
+
+
+    static Pubnub pn;
+
+    public static void main(String[] args) throws PubnubException, InterruptedException {
+
 
         pn = new Pubnub("demo", "demo", false);
-        //if (origin != null) {
-        pn.setOrigin("foo.pubnub.com");
-        //}
+        pn.setOrigin("foo");
+
         pn.setResumeOnReconnect(true);
         pn.setMaxRetries(2000000000);
         pn.setRetryInterval(10000);
-        //if (doHeardbeat) {
-        // Set timeout 5s longer than our heartbeat send interval
-        pn.setSubscribeTimeout(3000);
-        //}
+        pn.setSubscribeTimeout(1500);
 
-        Hashtable subArgs = new Hashtable(6);
-        subArgs.put("channel", "x");
-        pn.subscribe(subArgs, new Callback() {
-            public void connectCallback(String channel, Object message) {
-                System.out.println("Connected to channel " + channel);
-            }
+        subscribe("a");
 
-            public void disconnectCallback(String channel, Object message) {
-                System.out.println("Disconnected from channel " + channel);
+        //Thread.sleep(3000);
 
-            }
+        subscribe("z", "y", "x");
 
-            public void reconnectCallback(String channel, Object message) {
-                System.out.println("Reconnected to channel channel " + channel);
+        while (true) {
+            System.out.println("\r\n\r\nBEGIN!");
+            System.out.println("before sleep");
+            Thread.sleep(4000);
+            System.out.println("after sleep. publishing message now");
+            pn.publish("y", "some message", new Callback() {});
 
-            }
+        }
 
-            public void successCallback(String channel, Object message) {
-                System.out.println("Success from channel channel " + channel);
+    }
 
-            }
+    public static void subscribe(String ...channels) throws PubnubException {
+        ArrayList<String> channelArray = new ArrayList<String>();
 
-            public void errorCallback(String channel, Object message) {
-                if (message.toString() == "") {
-                    System.out.println("Channel channel " + channel + " assumed disconnected");
-                } else {
-                    System.out.println("Error on channel " + channel);
-                }
-            }
-        });
+        for (int i = 0; i < channels.length; i++) {
+            channelArray.add(channels[i]);
+        }
 
-
-        subArgs.put("channel", "y");
-        pn.subscribe(subArgs, new Callback() {
-            public void connectCallback(String channel, Object message) {
-                System.out.println("Connected to channel " + channel);
-            }
-
-            public void disconnectCallback(String channel, Object message) {
-                System.out.println("Disconnected from channel " + channel);
-
-            }
-
-            public void reconnectCallback(String channel, Object message) {
-                System.out.println("Reconnected to channel channel " + channel);
-
-            }
-
-            public void successCallback(String channel, Object message) {
-                System.out.println("Success from channel channel " + channel);
-
-            }
-
-            public void errorCallback(String channel, Object message) {
-                if (message.toString() == "") {
-                    System.out.println("Channel channel " + channel + " assumed disconnected");
-                } else {
-                    System.out.println("Error on channel " + channel);
-                }
-            }
-        });
-
+        pn.unsubscribeAll();
+        pn.subscribe(channels, OurCallback);
     }
 
 }
