@@ -26,6 +26,14 @@
             android:name="com.pubnub.examples.BatteryTest.PublishActivity"
             android:label="@string/title_activity_publish" >
         </activity>
+        <activity
+            android:name="com.pubnub.examples.BatteryTest.SubscribeActivity"
+            android:label="@string/title_activity_subscribe" >
+        </activity>
+        <activity
+            android:name="com.pubnub.examples.BatteryTest.HistoryActivity"
+            android:label="@string/title_activity_history" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
+import com.pubnub.api.PubnubException;
 import com.pubnub.examples.BatteryTest.R;
 
 
@@ -109,21 +110,29 @@ class PublishSuite extends Suite {
 }
 
 class SubscribeSuite extends Suite {
-
-	SubscribeSuite(String menuStr) {
-		super(menuStr);
-		// TODO Auto-generated constructor stub
+	private String channel;
+	SubscribeSuite(String channel) {
+		super("SUBSCRIBE : " + channel);
+		this.channel = channel;
 	}
 
 	@Override
 	public void runSuite() {
-		// TODO Auto-generated method stub
+		try {
+			BatteryTest.bt.pubnub.subscribe(new String[]{channel}, new Callback(){
+				@Override
+				public void successCallback(String channel, Object message) {
+					//Log.d("BatteryTest",message.toString());
+				}
+			});
+		} catch (PubnubException e) {
+		}
 		
 	}
 
 	@Override
 	public void stopSuite() {
-		// TODO Auto-generated method stub
+		BatteryTest.bt.pubnub.unsubscribe(channel);
 		
 	}
 	
@@ -154,11 +163,14 @@ class HistorySuite extends Suite {
 public class BatteryTest extends Activity {
 	
 	public static BatteryTest bt;
+	private Handler handler;
+	private Runnable runnable;
 	
     ArrayList<String> listItems = new ArrayList<String>();
     ArrayAdapter<String> adapter;
     
     private double testStartBU = 100.0;
+    private double testStartTime = 0;
     private int testDuration = 60;
     
     List<Suite> testSuites = new ArrayList<Suite>();
@@ -220,7 +232,10 @@ public class BatteryTest extends Activity {
     private void showBatteryUsage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Test Result");
-        builder.setMessage("Test Stopped. Duration : " + testDuration + " sec, Battery Usage " + (testStartBU - getBatteryLevel()) + " %");
+        builder.setMessage("Test Stopped. Duration : " + 
+        		( (System.currentTimeMillis()/1000) - testStartTime) + 
+        		" sec, Battery Usage " + (testStartBU - getBatteryLevel()) + 
+        		" %");
         final TextView textView = new TextView(this);
         builder.setView(textView);
         builder.setPositiveButton("Done",
@@ -281,8 +296,9 @@ public class BatteryTest extends Activity {
 		                    	} catch (Exception e) {
 		                    		testDuration = 60;
 		                    	}
-		                    	Handler handler = new Handler();
-		                    	Runnable runnable = new Runnable(){
+		                    	testStartTime = System.currentTimeMillis()/1000;
+		                    	handler = new Handler();
+		                    	runnable = new Runnable(){
 
 									@Override
 									public void run() {
@@ -317,6 +333,7 @@ public class BatteryTest extends Activity {
 					}
 				}
 				showBatteryUsage();
+				handler.removeCallbacks(runnable);
 				btnStartTest.setEnabled(true);
 				btnClearAll.setEnabled(true);
 				btnStopTest.setEnabled(false);
@@ -344,19 +361,20 @@ public class BatteryTest extends Activity {
             publish();
             return true;
             
-        case R.id.option3:
+        /*case R.id.option3:
             history();
             return true;
 
 
-        
+        */
         default:
             return super.onOptionsItemSelected(item);
         }
     }
 
 	private void history() {
-		// TODO Auto-generated method stub
+		Intent nextScreen = new Intent(getApplicationContext(), HistoryActivity.class);
+		startActivity(nextScreen);
 		
 	}
 
@@ -366,7 +384,8 @@ public class BatteryTest extends Activity {
 	}
 
 	private void subscribe() {
-		// TODO Auto-generated method stub
+		Intent nextScreen = new Intent(getApplicationContext(), SubscribeActivity.class);
+		startActivity(nextScreen);
 		
 	}
 
