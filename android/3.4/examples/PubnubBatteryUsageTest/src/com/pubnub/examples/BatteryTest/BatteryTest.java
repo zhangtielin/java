@@ -3,6 +3,7 @@ package com.pubnub.examples.BatteryTest;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Timer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -86,7 +88,7 @@ class PublishSuite extends Suite {
 	String channel;
 	PublishThread pt;
 	PublishSuite(String channel, int messageSize, int interval) {
-		super("PUBLISH : " + channel + " : " + messageSize + " : " + interval);
+		super("PUBLISH : " + channel + " : " + messageSize + " bytes  : " + interval + " sec");
 		this.channel = channel;
 		this.messageSize = messageSize;
 		this.interval = interval;
@@ -157,6 +159,7 @@ public class BatteryTest extends Activity {
     ArrayAdapter<String> adapter;
     
     private double testStartBU = 100.0;
+    private int testDuration = 60;
     
     List<Suite> testSuites = new ArrayList<Suite>();
     
@@ -210,14 +213,14 @@ public class BatteryTest extends Activity {
     	if (rawlevel >= 0 && scale > 0) {
     		level = rawlevel / scale;
     	}
-		return level;
+		return level * 100;
     					
     }
     
     private void showBatteryUsage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Test Result");
-        builder.setMessage("Test Stopped. Battery Usage " + (testStartBU - getBatteryLevel()));
+        builder.setMessage("Test Stopped. Duration : " + testDuration + " sec, Battery Usage " + (testStartBU - getBatteryLevel()) + " %");
         final TextView textView = new TextView(this);
         builder.setView(textView);
         builder.setPositiveButton("Done",
@@ -230,6 +233,7 @@ public class BatteryTest extends Activity {
         alert.show();
     }
 
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	bt = this;
@@ -243,7 +247,10 @@ public class BatteryTest extends Activity {
         lvItems.setAdapter(adapter);
         lvItems.setTextFilterEnabled(true);
         
-        Button btnClearAll = (Button) findViewById(R.id.btnClearAll);
+        final Button btnClearAll = (Button) findViewById(R.id.btnClearAll);
+        final Button btnStopTest = (Button) findViewById(R.id.btnStopTest);
+        final Button btnStartTest = (Button) findViewById(R.id.btnStartTest);
+        
         btnClearAll.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -252,21 +259,54 @@ public class BatteryTest extends Activity {
 				listItems.clear();
 				adapter.notifyDataSetChanged();
 			}});
-        
-        Button btnStartTest = (Button) findViewById(R.id.btnStartTest);
+
         btnStartTest.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				testStartBU = getBatteryLevel();
-				synchronized(testSuites) {
-					for (Suite s : testSuites) {
-						s.runSuite();
-					}
-				}
+				
+		        AlertDialog.Builder builder = new AlertDialog.Builder(BatteryTest.bt);
+		        builder.setTitle("Set Test Duration");
+		        builder.setMessage("Enter Test Duration in Seconds. Default 60 sec");
+		        final EditText edDuration = new EditText(BatteryTest.bt);
+		        edDuration.setInputType(InputType.TYPE_CLASS_NUMBER);
+		        builder.setView(edDuration);
+		        builder.setPositiveButton("Done",
+		                new DialogInterface.OnClickListener() {
+		                    @Override
+		                    public void onClick(DialogInterface dialog, int which) {
+		        				
+		                    	try {
+		                    		testDuration = Integer.parseInt(edDuration.getText().toString());
+		                    	} catch (Exception e) {
+		                    		testDuration = 60;
+		                    	}
+		                    	Handler handler = new Handler();
+		                    	Runnable runnable = new Runnable(){
+
+									@Override
+									public void run() {
+										btnStopTest.performClick();
+									}};
+									
+								handler.postDelayed(runnable, testDuration * 1000);
+		                    	testStartBU = getBatteryLevel();
+		        				synchronized(testSuites) {
+		        					for (Suite s : testSuites) {
+		        						s.runSuite();
+		        					}
+		        				}
+		        				btnStartTest.setEnabled(false);
+		        				btnStopTest.setEnabled(true);
+		        				btnClearAll.setEnabled(false);
+		                    }
+		                });
+		        AlertDialog alert = builder.create();
+		        alert.show();
+				
 			}});
         
-        Button btnStopTest = (Button) findViewById(R.id.btnStopTest);
+
         btnStopTest.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -277,7 +317,11 @@ public class BatteryTest extends Activity {
 					}
 				}
 				showBatteryUsage();
+				btnStartTest.setEnabled(true);
+				btnClearAll.setEnabled(true);
+				btnStopTest.setEnabled(false);
 			}});
+        btnStopTest.setEnabled(false);
     }
     
     @Override
