@@ -22,16 +22,6 @@
         <requestFocus />
     </EditText>
 
-    <Button
-        android:id="@+id/btnSubscribeAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText1"
-        android:layout_below="@+id/editText1"
-        android:layout_marginLeft="63dp"
-        android:layout_marginTop="31dp"
-        android:text="Add to Run" />
-
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
@@ -40,5 +30,15 @@
         android:layout_alignRight="@+id/btnSubscribeAdd"
         android:gravity="center_horizontal"
         android:text="Subscribe" />
+
+    <Button
+        android:id="@+id/btnSubscribeAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtSubscribeChannel"
+        android:layout_below="@+id/txtSubscribeChannel"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="16dp"
+        android:text="Add to Run" />
 
 </RelativeLayout>
