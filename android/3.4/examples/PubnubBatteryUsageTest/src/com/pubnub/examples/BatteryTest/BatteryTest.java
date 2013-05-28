@@ -253,7 +253,6 @@ public class BatteryTest extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
     	bt = this;
         super.onCreate(savedInstanceState);
-        notifyUser("On Create");
         setContentView(R.layout.main);
         adapter=new ArrayAdapter<String>(this,
             android.R.layout.simple_list_item_1,
