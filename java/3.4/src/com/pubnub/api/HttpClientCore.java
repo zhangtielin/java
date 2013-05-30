@@ -114,6 +114,6 @@ class HttpClientCore extends HttpClient {
     }
 
     public void shutdown() {
-        connection.disconnect();
+        if (connection != null) connection.disconnect();
     }
 }

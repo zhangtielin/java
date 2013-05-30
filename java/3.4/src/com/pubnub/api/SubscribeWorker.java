@@ -1,6 +1,7 @@
 package com.pubnub.api;
 
 import java.net.SocketTimeoutException;
+import java.net.SocketException;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -34,6 +35,11 @@ class SubscribeWorker extends AbstractSubscribeWorker {
                 }
                 break;
 
+            } catch (SocketException e) {
+
+                log.verbose("Socket Exception. Disconnect called on http connection " + e.toString());
+                break;
+
             } catch (Exception e) {
                 log.verbose("Retry Attempt : " + ((currentRetryAttempt == maxRetries)?"last":currentRetryAttempt)
                         + " Exception in Fetch : " + e.toString());
@@ -61,4 +67,8 @@ class SubscribeWorker extends AbstractSubscribeWorker {
         }
 
     }
+
+	public void shutdown() {
+		if (httpclient != null) httpclient.shutdown();
+	}
 }
