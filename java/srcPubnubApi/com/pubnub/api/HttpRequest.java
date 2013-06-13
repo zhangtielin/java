@@ -13,6 +13,7 @@ class HttpRequest {
     private String url;
     private boolean dar;
     private boolean subzero;
+    private Worker _worker;
 
     public boolean isSubzero() {
         return subzero;
@@ -28,6 +29,14 @@ class HttpRequest {
 
     public void setDar(boolean dar) {
         this.dar = dar;
+    }
+
+    public void setWorker(Worker worker) {
+        this._worker = worker;
+    }
+
+    public Worker getWorker() {
+        return this._worker;
     }
 
     public HttpRequest(String[] urlComponents, Hashtable params,

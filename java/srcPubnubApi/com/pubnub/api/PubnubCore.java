@@ -103,21 +103,21 @@ abstract class PubnubCore {
         }
         return ORIGIN_STR;
     }
-    
+
     private Hashtable hashtableClone(Hashtable ht) {
-    	if (ht == null)
-    		return null;
-    	
-    	Hashtable htresp = new Hashtable();
-    	Enumeration e = ht.keys();
-    	   
+        if (ht == null)
+            return null;
+
+        Hashtable htresp = new Hashtable();
+        Enumeration e = ht.keys();
+
         while(e.hasMoreElements()) {
           Object element = e.nextElement();
           htresp.put(element,ht.get(element));
         }
-    	return htresp;
+        return htresp;
     }
-    
+
 
     /**
      * This method returns all channel names currently subscribed to in form of
@@ -1053,9 +1053,21 @@ abstract class PubnubCore {
     }
 
     private void _subscribe_base(boolean fresh) {
-        _subscribe_base(fresh, false);
+        _subscribe_base(fresh, false, null);
     }
     private void _subscribe_base(boolean fresh, boolean dar) {
+        _subscribe_base(fresh, dar, null);
+    }
+    private void _subscribe_base(boolean fresh, Worker worker) {
+        _subscribe_base(fresh, false, worker);
+    }
+    private void _subscribe_base(Worker worker) {
+        _subscribe_base(false, false, worker);
+    }
+    private boolean workerDead(HttpRequest hreq) {
+        return (hreq == null || hreq.getWorker() == null)?false:hreq.getWorker()._die;
+    }
+    private void _subscribe_base(boolean fresh, boolean dar, Worker worker) {
         String channelString = subscriptions.getChannelString();
         String[] channelsArray = subscriptions.getChannelNames();
         if (channelsArray.length <= 0)
@@ -1132,12 +1144,12 @@ abstract class PubnubCore {
                                                         .decrypt(messages
                                                                 .get(i)
                                                                 .toString());
-                                                _channel.callback
+                                                if(!workerDead(hreq)) _channel.callback
                                                         .successCallback(
                                                                 _channel.name,
                                                                 stringToJSON(message));
                                             } catch (Exception e) {
-                                                _channel.callback
+                                                if(!workerDead(hreq)) _channel.callback
                                                         .errorCallback(
                                                                 _channel.name,
                                                                 PubnubError.PNERR_5024_DECRYPTION_ERROR + " : "
@@ -1146,7 +1158,7 @@ abstract class PubnubCore {
                                                                                 .toString());
                                             }
                                         } else {
-                                            _channel.callback.successCallback(
+                                            if(!workerDead(hreq)) _channel.callback.successCallback(
                                                     _channel.name,
                                                     messages.get(i));
                                         }
@@ -1173,12 +1185,12 @@ abstract class PubnubCore {
                                                         .decrypt(messages
                                                                 .get(i)
                                                                 .toString());
-                                                _channel.callback
+                                                if(!workerDead(hreq)) _channel.callback
                                                         .successCallback(
                                                                 _channel.name,
                                                                 stringToJSON(message));
                                             } catch (Exception e) {
-                                                _channel.callback
+                                                if(!workerDead(hreq)) _channel.callback
                                                         .errorCallback(
                                                                 _channel.name,
                                                                 PubnubError.PNERR_5025_DECRYPTION_ERROR + " : "
@@ -1187,7 +1199,7 @@ abstract class PubnubCore {
                                                                                 .toString());
                                             }
                                         } else {
-                                            _channel.callback.successCallback(
+                                            if(!workerDead(hreq)) _channel.callback.successCallback(
                                                     _channel.name,
                                                     messages.get(i));
                                         }
@@ -1198,21 +1210,21 @@ abstract class PubnubCore {
                             }
                             if (hreq.isSubzero()) {
                                 log.verbose("Response of subscribe 0 request. Need to do dAr process again");
-                                _subscribe_base(false, hreq.isDar());
+                                _subscribe_base(false, hreq.isDar(), hreq.getWorker());
                             } else
-                                _subscribe_base(false);
+                                _subscribe_base(false, hreq.getWorker());
                         } catch (JSONException e) {
                             if (hreq.isSubzero()) {
                                 log.verbose("Response of subscribe 0 request. Need to do dAr process again");
-                                _subscribe_base(false, hreq.isDar());
+                                _subscribe_base(false, hreq.isDar(), hreq.getWorker());
                             } else
-                                _subscribe_base(false);
+                                _subscribe_base(false, hreq.getWorker());
                         }
 
                     }
 
                     public void handleBackFromDar(HttpRequest hreq) {
-                        _subscribe_base(false);
+                        _subscribe_base(false, hreq.getWorker());
                     }
 
                     public void handleError(HttpRequest hreq, String response) {
@@ -1241,6 +1253,8 @@ abstract class PubnubCore {
             log.verbose("This is a subscribe 0 request");
         }
         hreq.setDar(dar);
+        if ( worker != null && worker instanceof Worker )
+            hreq.setWorker(worker);
         _request(hreq, subscribeManager, fresh);
     }
 
