@@ -177,7 +177,7 @@ public class Pubnub extends PubnubCore {
     }
 
     protected String getUserAgent() {
-        return "Java/" + VERSION;
+        return "Codenameone/" + VERSION;
     }
 
     /**
