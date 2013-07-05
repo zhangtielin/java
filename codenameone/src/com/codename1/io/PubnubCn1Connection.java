@@ -8,8 +8,8 @@ import java.util.Hashtable;
 import com.codename1.impl.CodenameOneImplementation;
 import com.pubnub.api.HttpUtil;
 import java.io.UnsupportedEncodingException;
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
+
+import com.codename1.io.gzip.*;
 
 public class PubnubCn1Connection {
 
@@ -60,8 +60,14 @@ public class PubnubCn1Connection {
             }
         }
         contentLength = impl.getContentLength(connection);
+        String c = impl.getHeaderField("Content-Encoding", connection);
+        boolean isGzipped = c != null && c.equalsIgnoreCase("gzip");
         try {
-            input = impl.openInputStream(connection);
+            if (isGzipped) {
+                input = new GZIPInputStream(impl.openInputStream(connection));
+            } else {
+                input = impl.openInputStream(connection);
+            }
             data = Util.readInputStream(input);
             input.close();
         } catch (IOException ex) {

@@ -11,6 +11,7 @@ import com.codename1.ui.util.Resources;
 
 import com.pubnub.api.*;
 
+import org.json.*;
 
 /**
  *
@@ -39,8 +40,7 @@ public class StateMachine extends StateMachineBase {
     protected void onPublish_BtnPublishOkAction(Component c, ActionEvent event) {
         String channel = findTxtPublishChannel().getText();
         String message = findTxtPublishMessage().getText();
-        pubnub.publish(channel, message, new Callback() {
-
+        Callback cb = new Callback() {
             @Override
             public void successCallback(String channel, Object message) {
                 new Dialog().show("Publish", message.toString() , Dialog.TYPE_INFO, null, "Ok", null);
@@ -49,7 +49,34 @@ public class StateMachine extends StateMachineBase {
             public void errorCallback(String channel, PubnubError message) {
                 new Dialog().show("Publish", message.toString() , Dialog.TYPE_INFO, null, "Ok", null);
             }
-        });
+        };
+        try {
+            Integer i = Integer.parseInt(message);
+            pubnub.publish(channel, i, cb);
+            return;
+        } catch (Exception e) {
+        }
+        try {
+            Double d = Double.parseDouble(message);
+            pubnub.publish(channel, d, cb);
+            return;
+        } catch (Exception e) {
+        }
+        try {
+            JSONArray jsa = new JSONArray(message);
+            pubnub.publish(channel, jsa, cb);
+            return;
+        } catch (Exception e) {
+        }
+        try {
+            JSONObject jso = new JSONObject(message);
+            pubnub.publish(channel, jso, cb);
+            return;
+        } catch (Exception e) {
+        }
+
+        pubnub.publish(channel, message, cb);
+
     }
 
     @Override

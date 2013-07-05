@@ -33,7 +33,7 @@ class SubscribeWorker extends AbstractSubscribeWorker {
                 hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
                 if (hresp != null
                         && HttpUtil.checkResponseSuccess(hresp
-                                                           .getStatusCode())) {
+                                                         .getStatusCode())) {
                     currentRetryAttempt = 1;
                     break;
                 }

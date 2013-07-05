@@ -1,7 +1,6 @@
 package com.pubnub.api;
 
 import static com.pubnub.api.PubnubError.*;
-import static com.pubnub.api.PubnubError.getErrorObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,11 +14,9 @@ import org.json.*;
 
 class HttpClientCore extends HttpClient {
 
-
     PubnubCn1Connection connection;
     private int requestTimeout = 310000;
     private int connectionTimeout = 5000;
-
 
     protected static Logger log = new Logger(Worker.class);
 
@@ -59,7 +56,7 @@ class HttpClientCore extends HttpClient {
         IOException excp = null;
         PubnubCn1Response pcr = null;
         try {
-            pcr = connection.fetch(url, requestTimeout, headers);
+            pcr = connection.fetch(url, requestTimeout, Pubnub.hashtableMerge(headers,this._headers));
         } catch (IOException ex) {
             excp = ex;
         }

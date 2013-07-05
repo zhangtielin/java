@@ -145,7 +145,7 @@ abstract class PubnubCore {
         return this.CACHE_BUSTING;
     }
 
-    protected Hashtable hashtableClone(Hashtable ht) {
+    static Hashtable hashtableClone(Hashtable ht) {
         if (ht == null)
             return null;
 
@@ -155,6 +155,29 @@ abstract class PubnubCore {
         while (e.hasMoreElements()) {
             Object element = e.nextElement();
             htresp.put(element, ht.get(element));
+        }
+        return htresp;
+    }
+    static Hashtable hashtableMerge(Hashtable ht1, Hashtable ht2) {
+        if (ht1 == null && ht2 == null)
+            return null;
+
+        Hashtable htresp = new Hashtable();
+        if (ht1 != null) {
+            Enumeration e = ht1.keys();
+
+            while (e.hasMoreElements()) {
+                Object element = e.nextElement();
+                htresp.put(element, ht1.get(element));
+            }
+        }
+        if (ht2 != null) {
+            Enumeration e = ht2.keys();
+
+            while (e.hasMoreElements()) {
+                Object element = e.nextElement();
+                htresp.put(element, ht2.get(element));
+            }
         }
         return htresp;
     }
@@ -504,6 +527,8 @@ abstract class PubnubCore {
         final Object message = args.get("message");
         final Callback callback = (Callback) args.get("callback");
         String msgStr = message.toString();
+        System.out.println("Channel : " + channel);
+        System.out.println("Message : " + message);
 
         if (this.CIPHER_KEY.length() > 0) {
             // Encrypt Message
@@ -548,7 +573,7 @@ abstract class PubnubCore {
                 signature = new String(Hex.encode(PubnubCrypto
                                                   .md5(string_to_sign.toString())), "UTF-8");
             } catch (UnsupportedEncodingException e) {
-
+                System.out.println(e);
             }
         }
         String[] urlComponents = { getPubnubUrl(), "publish", this.PUBLISH_KEY,
@@ -1566,7 +1591,7 @@ abstract class PubnubCore {
                                               PubnubError.PNERROBJ_DISCONN_AND_RESUB);
     }
 
-    /**
+    /**                    hreq.getResponseHandler().handleError(hreq, getErrorObject(PNERROBJ_HTTP_ERROR, 1));
      * Disconnect from all channels, and resubscribe
      *
      */
