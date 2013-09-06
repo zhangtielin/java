@@ -349,6 +349,8 @@ public class PubnubDemoConsole {
             case 24:
                 pubnub.setCacheBusting(false);
                 break;
+            case 25:
+                pubnub.unsubscribeAll();
             default:
                 notifyUser("Invalid Input");
             }
@@ -536,6 +538,7 @@ public class PubnubDemoConsole {
         notifyUser("ENTER 22 FOR Setting Domain ( current: "+ pubnub.getDomain() + " )");
         notifyUser("ENTER 23 FOR Enabling Cache Busting  ( current: " + pubnub.getCacheBusting() + " )");
         notifyUser("ENTER 24 FOR Disabling Cache Busting ( current: " + pubnub.getCacheBusting() + " )");
+        notifyUser("ENTER 25 FOR Unsubscribing from all channels");
         notifyUser("\nENTER 0 to display this menu");
     }
 

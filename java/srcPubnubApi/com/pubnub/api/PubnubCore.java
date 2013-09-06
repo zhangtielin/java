@@ -993,8 +993,7 @@ abstract class PubnubCore {
      *
      */
     public void unsubscribeAll() {
-        subscriptions.removeAllChannels();
-        disconnectAndResubscribe();
+        unsubscribe(subscriptions.getChannelNames());
     }
 
     /**
