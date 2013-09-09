@@ -32,7 +32,7 @@ abstract class PubnubCore {
     protected String PUBLISH_KEY = "";
     protected String SUBSCRIBE_KEY = "";
     protected String SECRET_KEY = "";
-    private String CIPHER_KEY = "";
+    protected String CIPHER_KEY = "";
     private String IV = null;
     private volatile String AUTH_STR = null;
     private volatile boolean CACHE_BUSTING = true;

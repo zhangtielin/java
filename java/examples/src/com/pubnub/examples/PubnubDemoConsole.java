@@ -35,6 +35,48 @@ public class PubnubDemoConsole {
         out.println(message.toString());
     }
 
+    private void publish31(String channel) {
+        notifyUser("Enter the message for publish. To exit loop enter QUIT");
+        String message = "";
+
+        Callback cb = new Callback() {
+            @Override
+            public void successCallback(String channel, Object message) {
+                notifyUser("PUBLISH : " + message);
+            }
+
+            @Override
+            public void errorCallback(String channel, PubnubError error) {
+                notifyUser("PUBLISH : " + error);
+            }
+        };
+
+        while (true) {
+            Hashtable args = new Hashtable(2);
+            message = reader.nextLine();
+            if (message.equalsIgnoreCase("QUIT")) {
+                break;
+            }
+            try {
+                JSONArray js = new JSONArray(message);
+                pubnub.publish31(channel, js, cb);
+                continue;
+            } catch (Exception e) {
+
+            }
+            try {
+                JSONObject js = new JSONObject(message);
+                pubnub.publish31(channel, js, cb);
+                continue;
+            } catch (Exception e) {
+
+            }
+            pubnub.publish31(channel, message, cb);
+        }
+
+    }
+
+
     private void publish(String channel) {
         notifyUser("Enter the message for publish. To exit loop enter QUIT");
         String message = "";
@@ -90,6 +132,7 @@ public class PubnubDemoConsole {
         }
 
     }
+
 
     private void subscribe(final String channel) {
         Hashtable args = new Hashtable(6);
@@ -349,6 +392,10 @@ public class PubnubDemoConsole {
             case 24:
                 pubnub.setCacheBusting(false);
                 break;
+            case 25:
+                channelName = getStringFromConsole("Channel Name");
+                publish31(channelName);
+                break;
             default:
                 notifyUser("Invalid Input");
             }
@@ -536,6 +583,7 @@ public class PubnubDemoConsole {
         notifyUser("ENTER 22 FOR Setting Domain ( current: "+ pubnub.getDomain() + " )");
         notifyUser("ENTER 23 FOR Enabling Cache Busting  ( current: " + pubnub.getCacheBusting() + " )");
         notifyUser("ENTER 24 FOR Disabling Cache Busting ( current: " + pubnub.getCacheBusting() + " )");
+        notifyUser("ENTER 25 FOR Publish 3.1");
         notifyUser("\nENTER 0 to display this menu");
     }
 
