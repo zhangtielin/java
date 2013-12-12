@@ -900,5 +900,4 @@ public class Pubnub extends PubnubCore {
     public void pamRevoke(String channel, Callback callback) {
         pamGrant(channel, null, false, false, callback);
     }
-
 }
