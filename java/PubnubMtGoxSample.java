@@ -11,7 +11,11 @@ public class PubnubMtGoxSample {
 
 			@Override
 			public void callback(JSONObject data) {
-				System.out.println(data.getClass() + " : " + data);
+                try {
+				    String channel_name = (String)data.get("channel_name");
+                    String avg_value = (String)(((JSONObject)((JSONObject)data.get("ticker")).get("avg")).get("value"));
+				    System.out.println(channel_name + " : " + avg_value);
+                } catch (Exception e) {}
 				
 			}});
 	}
