@@ -26,6 +26,7 @@ class PublisherThread implements Runnable {
 						try {
 							message.put("publishSuccessTimestamp", System.currentTimeMillis());
 							message.put("publishTime", message.getInt("publishSuccessTimestamp")  - message.getInt("publishTimestamp"));
+							message.put("threadId", Thread.currentThread().getId());
 							System.out.println(message);
 							publisher.gotResponse(message);
 						} catch (JSONException e) {

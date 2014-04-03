@@ -13,12 +13,12 @@ public class PublishTest {
 	public static void main(String[] args) {
 		Pubnub pubnub = new Pubnub("demo", "demo", 100);
 		
-		/*
-			 pn.setCacheBusting(false);
-			 pn.setOrigin("pubsub");
-			 pn.setDomain("pubnub.co");  // only if required
+		
+			 pubnub.setCacheBusting(false);
+			 pubnub.setOrigin("pubsub");
+			 //pn.setDomain("pubnub.co");  // only if required
 		  
-		 */
+		 
 		
 		int noOfMessages = 100;
 		JSONObject[] jsoArray = new JSONObject[noOfMessages];

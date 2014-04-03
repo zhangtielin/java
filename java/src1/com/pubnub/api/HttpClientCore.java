@@ -130,7 +130,16 @@ class HttpClientCore extends HttpClient {
             throw new PubnubException(getErrorObject(PNERROBJ_CONNECT_EXCEPTION, url + " : " + e.toString()));
         }
         */
-
+        long requestSendingTimestamp = System.currentTimeMillis();
+        JSONObject jso = new JSONObject();
+        try {
+        	jso.put("threadId", Thread.currentThread().getId());
+        	jso.put("url",url);
+			jso.put("requestSendingTimestamp", requestSendingTimestamp );
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         int rc = HttpURLConnection.HTTP_INTERNAL_ERROR;
         try {
             rc = connection.getResponseCode();
@@ -140,7 +149,15 @@ class HttpClientCore extends HttpClient {
         catch (IOException e) {
             throw new PubnubException(getErrorObject(PNERROBJ_HTTP_RC_ERROR, url + " : " + e.toString()));
         }
-
+        long responseTimestamp = System.currentTimeMillis();
+        try {
+			jso.put("responseTimestamp", responseTimestamp);
+			jso.put("requestTimetaken", responseTimestamp - requestSendingTimestamp);
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        System.out.println(jso);
 
         InputStream is = null;
         String encoding = connection.getContentEncoding();
