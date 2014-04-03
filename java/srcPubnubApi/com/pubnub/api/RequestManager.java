@@ -127,7 +127,7 @@ class NonSubscribeWorker extends Worker {
 
 abstract class RequestManager {
 
-    private static int _maxWorkers = 1;
+    private int _maxWorkers = 1;
     protected Vector _waiting = new Vector();
     protected Worker _workers[];
     protected String name;
@@ -138,7 +138,7 @@ abstract class RequestManager {
 
     protected static Logger log = new Logger(RequestManager.class);
 
-    public static int getWorkerCount() {
+    public int getWorkerCount() {
         return _maxWorkers;
     }
 
@@ -168,8 +168,16 @@ abstract class RequestManager {
         this.requestTimeout = requestTimeout;
         initManager(_maxWorkers, name);
     }
+    
+    public RequestManager(String name, int connectionTimeout, int requestTimeout, int maxWorkers) {
+    	this._maxWorkers = maxWorkers;
+        this.connectionTimeout = connectionTimeout;
+        this.requestTimeout = requestTimeout;
+        initManager(maxWorkers, name);
+    }
 
-    private void interruptWorkers() {
+
+	private void interruptWorkers() {
         synchronized (_workers) {
             for (int i = 0; i < _workers.length; i++) {
                 _workers[i].interruptWorker();
@@ -217,7 +225,7 @@ abstract class RequestManager {
         }
     }
 
-    public static void setWorkerCount(int count) {
+    public void setWorkerCount(int count) {
         _maxWorkers = count;
     }
 
@@ -242,7 +250,7 @@ abstract class AbstractSubscribeManager extends RequestManager {
 
     public AbstractSubscribeManager(String name, int connectionTimeout,
                                     int requestTimeout) {
-        super(name, connectionTimeout, requestTimeout);
+    	super(name, connectionTimeout, requestTimeout);
     }
 
     public Worker getWorker() {
@@ -294,7 +302,12 @@ abstract class AbstractNonSubscribeManager extends RequestManager {
         super(name, connectionTimeout, requestTimeout);
     }
 
-    public Worker getWorker() {
+    public AbstractNonSubscribeManager(String name, int connectionTimeout,
+			int requestTimeout, int workers) {
+		super(name, connectionTimeout, requestTimeout, workers);
+	}
+
+	public Worker getWorker() {
         return new NonSubscribeWorker(_waiting, connectionTimeout,
                                       requestTimeout, headers);
     }

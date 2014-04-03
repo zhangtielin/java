@@ -400,6 +400,29 @@ abstract class PubnubCore {
     }
 
     /**
+    *
+    * Constructor for Pubnub Class
+    *
+    * @param publish_key
+    *            Publish Key
+    * @param subscribe_key
+    *            Subscribe Key
+    * @param secret_key
+    *            Secret Key
+    * @param cipher_key
+    *            Cipher Key
+    * @param ssl_on
+    *            SSL enabled ?
+    * @param initialization_vector
+    *            Initialization vector
+    */
+
+   public PubnubCore(String publish_key, String subscribe_key,
+           String secret_key, String cipher_key, boolean ssl_on, String initialization_vector, int nonSubscribeWorkers) {
+       this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on, initialization_vector, nonSubscribeWorkers);
+   }
+    
+    /**
      *
      * Constructor for Pubnub Class
      *
@@ -521,7 +544,11 @@ abstract class PubnubCore {
         this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on, null);
     }
 
-
+    private void init(String publish_key, String subscribe_key,
+            String secret_key, String cipher_key, boolean ssl_on, String initialization_vector) {
+    	this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on, initialization_vector, 1);
+    }
+    
     /**
      *
      * Initialize PubNub Object State.
@@ -533,7 +560,7 @@ abstract class PubnubCore {
      * @param ssl_on
      */
     private void init(String publish_key, String subscribe_key,
-            String secret_key, String cipher_key, boolean ssl_on, String initialization_vector) {
+            String secret_key, String cipher_key, boolean ssl_on, String initialization_vector, int nonSubscribeWorkers) {
         this.PUBLISH_KEY = publish_key;
         this.SUBSCRIBE_KEY = subscribe_key;
         this.SECRET_KEY = secret_key;
@@ -553,7 +580,7 @@ abstract class PubnubCore {
         if (nonSubscribeManager == null)
             nonSubscribeManager = new NonSubscribeManager(
                     "Non-Subscribe-Manager-" + System.identityHashCode(this),
-                    10000, 15000);
+                    10000, 15000, nonSubscribeWorkers);
 
         if (timedTaskManager == null)
             timedTaskManager = new TimedTaskManager("TimedTaskManager");

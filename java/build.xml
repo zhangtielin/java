@@ -82,7 +82,7 @@
         <antcall target="unsetDebugTrue" />
     </target>
 
-    <target depends="create-jar, create-test-jar, create-examples-jar, create-demo-console-jar, create-presence-test-jar, clean_bin, doc" name="build-jar"/>
+    <target depends="create-jar, create-test-jar, create-examples-jar, create-demo-console-jar, create-presence-test-jar, create-publish-test-jar, clean_bin, doc" name="build-jar"/>
     <target depends="build-project" name="create-jar">
         <jar destfile="${jar_name}"
             basedir="bin"
@@ -199,6 +199,9 @@
     </target>
     <target name="create-presence-test-jar">
         <create-jar jar.type="examples" jar.classname="com.pubnub.examples.PubnubPresenceTest" jar.filename="PubnubPresenceTest.jar" />
+    </target>
+    <target name="create-publish-test-jar">
+        <create-jar jar.type="examples" jar.classname="com.pubnub.examples.loadtest.PublishTest" jar.filename="PubnubPublishTest.jar" />
     </target>
     <target name="doc" depends="init" description="generate documentation">
         <javadoc access="public" sourcepath="srcPubnubApi:src:srcLogging:src1" destdir="doc" classpathref="PubnubApi.classpath"/>

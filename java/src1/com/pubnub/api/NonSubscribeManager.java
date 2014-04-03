@@ -6,6 +6,11 @@ class NonSubscribeManager extends AbstractNonSubscribeManager {
                                int requestTimeout) {
         super(name, connectionTimeout, requestTimeout);
     }
+    
+    public NonSubscribeManager(String name, int connectionTimeout,
+            int requestTimeout, int workers) {
+    	super(name, connectionTimeout, requestTimeout, workers);
+    }
 
     public void clearRequestQueue() {
         _waiting.clear();

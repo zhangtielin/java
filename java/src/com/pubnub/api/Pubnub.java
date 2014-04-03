@@ -75,6 +75,18 @@ public class Pubnub extends PubnubCoreShared {
     public Pubnub(String publish_key, String subscribe_key) {
         super(publish_key, subscribe_key, "", "", false);
     }
+    
+    /**
+     * Pubnub Constructor
+     *
+     * @param publish_key
+     *            Publish Key
+     * @param subscribe_key
+     *            Subscribe Key
+     */
+    public Pubnub(String publish_key, String subscribe_key, int nonSubscribeWorkers) {
+        super(publish_key, subscribe_key, "", "", false, "", nonSubscribeWorkers);
+    }
 
     /**
      * @param publish_key

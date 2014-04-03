@@ -119,7 +119,12 @@ abstract class PubnubCoreShared extends PubnubCore {
         super(publish_key, subscribe_key, secret_key, cipher_key, ssl_on, initialization_vector);
     }
 
-    /**
+    public PubnubCoreShared(String publish_key, String subscribe_key,
+			String secret_key, String cipher_key, boolean ssl_on , String initialization_vector, int nonSubscribeWorkers) {
+    	super(publish_key, subscribe_key, secret_key, cipher_key, ssl_on, initialization_vector, nonSubscribeWorkers);
+	}
+
+	/**
      * Sets value for UUID
      *
      * @param uuid
