@@ -12,7 +12,15 @@ public class PublishTest {
 	 */
 	public static void main(String[] args) {
 		Pubnub pubnub = new Pubnub("demo", "demo", 100);
-		int noOfMessages = 500;
+		
+		/*
+			 pn.setCacheBusting(false);
+			 pn.setOrigin("pubsub");
+			 pn.setDomain("pubnub.co");  // only if required
+		  
+		 */
+		
+		int noOfMessages = 100;
 		JSONObject[] jsoArray = new JSONObject[noOfMessages];
 		
 		for ( int i = 0; i < noOfMessages; i++) {
@@ -26,7 +34,7 @@ public class PublishTest {
 			jsoArray[i] = jso;
 		}
 		
-		Publisher publisher = new Publisher(1234, 500, pubnub, jsoArray);
+		Publisher publisher = new Publisher(1234, noOfMessages, pubnub, jsoArray);
 		publisher.init();
 		publisher.start();
 	}
