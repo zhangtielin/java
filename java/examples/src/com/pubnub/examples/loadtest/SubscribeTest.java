@@ -19,7 +19,7 @@ public class SubscribeTest {
 			channels[i] = "channel-" + (i+1);
 		}
 		
-		Subscriber subscriber = new Subscriber(1234, channels, 10);
+		Subscriber subscriber = new Subscriber(1234, channels, 100);
 		subscriber.init();
 		subscriber.start();
 	}
