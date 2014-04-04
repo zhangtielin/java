@@ -83,6 +83,8 @@ class Subscriber {
 	}
 	synchronized void received(String channel) {
 		receivedChannels.add(channel);
+		System.out.println("Received = " + receivedChannels.size());
+		System.out.println("Errors = " + errorChannels.size());
 		if (receivedChannels.size() + errorChannels.size() == channels.length) {
 			System.out.println("MESSAGES FOR ALL CHANNELS RECEIVED . SUCCESS : " + receivedChannels.size() + ", ERRORS : " + errorChannels.size());
 		}
@@ -90,6 +92,8 @@ class Subscriber {
 	
 	synchronized void errors(String channel) {
 		errorChannels.add(channel);
+		System.out.println("Received = " + receivedChannels.size());
+		System.out.println("Errors = " + errorChannels.size());
 		if (receivedChannels.size() + errorChannels.size() == channels.length) {
 			System.out.println("MESSAGES FOR ALL CHANNELS RECEIVED . SUCCESS : " + receivedChannels.size() + ", ERRORS : " + errorChannels.size());
 		}
