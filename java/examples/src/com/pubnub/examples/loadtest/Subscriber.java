@@ -75,6 +75,7 @@ class Subscriber {
 	private int channelsPerThread;
 	private SubscriberThread[] threads;
 	int channelsIndex = 0;
+	long firstTimestamp = 0L;
 	
 	synchronized void connected(String channel) {
 		connectedChannels.add(channel);
@@ -84,6 +85,9 @@ class Subscriber {
 	}
 	synchronized void received(String channel) {
 		receivedChannels.add(channel);
+		if (firstTimestamp == 0) {
+			firstTimestamp = System.currentTimeMillis();
+		}
 		System.out.println("Received = " + receivedChannels.size());
 		System.out.println("Errors = " + errorChannels.size());
                 if ( inputChannels.size() - (receivedChannels.size() + errorChannels.size()) < 100 ) {
@@ -93,6 +97,8 @@ class Subscriber {
                 }
 		if (receivedChannels.size() + errorChannels.size() == channels.length) {
 			System.err.println("MESSAGES FOR ALL CHANNELS RECEIVED . SUCCESS : " + receivedChannels.size() + ", ERRORS : " + errorChannels.size());
+			System.err.println("Difference ( in ms ) between timestamp of last and first received message : " + 
+					(System.currentTimeMillis() - firstTimestamp));
 		}
 	}
 	
