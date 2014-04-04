@@ -11,22 +11,25 @@ public class PublishTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Pubnub pubnub = new Pubnub("demo", "demo", 100);
+
 		
+		String prefix = (args.length > 0)?args[0] + "-":"";
+		int noOfMessages = (args.length > 1)?Integer.parseInt(args[1]):10000;
+		int workers = (args.length > 2)?Integer.parseInt(args[2]):10000;
 		
-			 pubnub.setCacheBusting(false);
-			 pubnub.setOrigin("infra.devbuild");
+		Pubnub pubnub = new Pubnub("demo", "demo", workers);
+		
+	    pubnub.setCacheBusting(false);
+        pubnub.setOrigin("infra.devbuild");
 			 //pn.setDomain("pubnub.co");  // only if required
 		  
-		 
-		
-		int noOfMessages = 10000;
+
 		JSONObject[] jsoArray = new JSONObject[noOfMessages];
 		
 		for ( int i = 0; i < noOfMessages; i++) {
 			JSONObject jso = new JSONObject();
 			try {
-				jso.put("channel", "channel-" + (i+1));
+				jso.put("channel", "channel-" + prefix + (i+1));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
