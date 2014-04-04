@@ -71,6 +71,7 @@ class Subscriber {
 	int noOfChannels;
 	int noOfThreads;
 	int id;
+	String origin = "pubsub";
 	private int channelsPerThread;
 	private SubscriberThread[] threads;
 	int channelsIndex = 0;
@@ -101,12 +102,13 @@ class Subscriber {
 	
 	
 	
-	Subscriber(int id, String[] channels, int noOfThreads) {
+	Subscriber(int id, String[] channels, int noOfThreads, String origin) {
 		this.id = id;
 		this.channels = channels;
 		this.noOfThreads = noOfThreads;
 		this.channelsPerThread = this.channels.length / this.noOfThreads;
 		this.threads = new SubscriberThread[this.noOfThreads];
+		this.origin = origin;
 	}
 	
 	void init() {
@@ -123,7 +125,7 @@ class Subscriber {
 			Pubnub pn = new Pubnub("demo", "demo");
 			
 			 pn.setCacheBusting(false);
-			 pn.setOrigin("infra.devbuild");
+			 pn.setOrigin(origin);
 			 /*
 			 pn.setDomain("pubnub.co");  // only if required
 			  

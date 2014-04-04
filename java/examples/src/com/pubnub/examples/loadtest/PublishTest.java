@@ -16,11 +16,12 @@ public class PublishTest {
 		String prefix = (args.length > 0)?args[0] + "-":"";
 		int noOfMessages = (args.length > 1)?Integer.parseInt(args[1]):10000;
 		int workers = (args.length > 2)?Integer.parseInt(args[2]):10000;
+		String origin = (args.length > 3)?args[3]:"pubsub";
 		
 		Pubnub pubnub = new Pubnub("demo", "demo", workers);
 		
 	    pubnub.setCacheBusting(false);
-        pubnub.setOrigin("infra.devbuild");
+        pubnub.setOrigin(origin);
 			 //pn.setDomain("pubnub.co");  // only if required
 		  
 
