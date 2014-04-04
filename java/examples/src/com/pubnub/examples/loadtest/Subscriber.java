@@ -119,7 +119,7 @@ class Subscriber {
 			Pubnub pn = new Pubnub("demo", "demo");
 			
 			 pn.setCacheBusting(false);
-			 pn.setOrigin("infra.debuild");
+			 pn.setOrigin("infra.devbuild");
 			 /*
 			 pn.setDomain("pubnub.co");  // only if required
 			  
