@@ -108,7 +108,7 @@ class Subscriber {
 	void init() {
 		for (int i = 0; i < this.noOfThreads; i++) {
 			int channelsLeft = this.channels.length - this.channelsIndex;
-			int channelsCount = (channelsLeft - this.channelsIndex > this.channelsPerThread)?this.channelsPerThread: channelsLeft;
+			int channelsCount = (channelsLeft > this.channelsPerThread)?this.channelsPerThread: channelsLeft;
 			String[] ch = new String[channelsCount];
 			
 			for (int j = 0; j < channelsCount; j++) {
@@ -117,9 +117,10 @@ class Subscriber {
 			}
 			this.channelsIndex += channelsCount;
 			Pubnub pn = new Pubnub("demo", "demo");
-			/*
+			
 			 pn.setCacheBusting(false);
-			 pn.setOrigin("pubsub");
+			 pn.setOrigin("infra.debuild");
+			 /*
 			 pn.setDomain("pubnub.co");  // only if required
 			  
 			 */

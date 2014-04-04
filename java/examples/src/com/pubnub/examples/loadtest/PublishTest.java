@@ -15,12 +15,12 @@ public class PublishTest {
 		
 		
 			 pubnub.setCacheBusting(false);
-			 pubnub.setOrigin("pubsub");
+			 pubnub.setOrigin("infra.devbuild");
 			 //pn.setDomain("pubnub.co");  // only if required
 		  
 		 
 		
-		int noOfMessages = 100;
+		int noOfMessages = 10000;
 		JSONObject[] jsoArray = new JSONObject[noOfMessages];
 		
 		for ( int i = 0; i < noOfMessages; i++) {

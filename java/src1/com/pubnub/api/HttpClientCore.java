@@ -236,6 +236,7 @@ class HttpClientCore extends HttpClient {
                 throw new PubnubException(getErrorObject(PNERROBJ_BAD_REQUEST, page));
             }
         case HttpURLConnection.HTTP_NOT_FOUND:
+        	System.out.println("404 , URL = " + url);
             {
                 JSONObject payload = null;
                 String message = null;

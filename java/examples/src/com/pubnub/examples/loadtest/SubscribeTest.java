@@ -12,7 +12,7 @@ public class SubscribeTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		int noOfChannels = 100;
+		int noOfChannels = 10000;
 		String[] channels = new String[noOfChannels];
 		
 		for ( int i = 0; i < noOfChannels; i++) {
