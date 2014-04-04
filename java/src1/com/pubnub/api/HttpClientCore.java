@@ -157,7 +157,7 @@ class HttpClientCore extends HttpClient {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        System.out.println(jso);
+
 
         InputStream is = null;
         String encoding = connection.getContentEncoding();
@@ -194,6 +194,14 @@ class HttpClientCore extends HttpClient {
 			}
         }
 
+        try {
+			jso.put("response", page);
+	        jso.put("responseCode", rc);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+        
+        System.out.println(jso);
         log.verbose("URL = " + url + ", Status Code : "  + rc + ", : RESPONSE = " + page);
         switch (rc) {
         case HttpURLConnection.HTTP_FORBIDDEN:
