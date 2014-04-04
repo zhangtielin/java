@@ -120,6 +120,7 @@ class Subscriber {
 		this.noOfThreads = noOfThreads;
 		this.channelsPerThread = this.channels.length / this.noOfThreads;
 		this.subRunnables = new SubscriberRunnable[this.noOfThreads];
+		this.threads = new Thread[this.noOfThreads];
 		this.origin = origin;
 	}
 	
