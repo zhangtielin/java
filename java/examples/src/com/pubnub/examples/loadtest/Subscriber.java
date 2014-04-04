@@ -79,15 +79,20 @@ class Subscriber {
 	synchronized void connected(String channel) {
 		connectedChannels.add(channel);
 		if (connectedChannels.size() == channels.length) {
-			System.out.println("ALL CHANNELS CONNECTED . Count : " + connectedChannels.size());
+			System.err.println("ALL CHANNELS CONNECTED . Count : " + connectedChannels.size());
 		}
 	}
 	synchronized void received(String channel) {
 		receivedChannels.add(channel);
 		System.out.println("Received = " + receivedChannels.size());
 		System.out.println("Errors = " + errorChannels.size());
+                if ( inputChannels.size() - (receivedChannels.size() + errorChannels.size()) < 100 ) {
+		    System.err.println("Received = " + receivedChannels.size());
+		    System.err.println("Errors = " + errorChannels.size());
+
+                }
 		if (receivedChannels.size() + errorChannels.size() == channels.length) {
-			System.out.println("MESSAGES FOR ALL CHANNELS RECEIVED . SUCCESS : " + receivedChannels.size() + ", ERRORS : " + errorChannels.size());
+			System.err.println("MESSAGES FOR ALL CHANNELS RECEIVED . SUCCESS : " + receivedChannels.size() + ", ERRORS : " + errorChannels.size());
 		}
 	}
 	
@@ -96,7 +101,7 @@ class Subscriber {
 		System.out.println("Received = " + receivedChannels.size());
 		System.out.println("Errors = " + errorChannels.size());
 		if (receivedChannels.size() + errorChannels.size() == channels.length) {
-			System.out.println("MESSAGES FOR ALL CHANNELS RECEIVED . SUCCESS : " + receivedChannels.size() + ", ERRORS : " + errorChannels.size());
+			System.err.println("MESSAGES FOR ALL CHANNELS RECEIVED . SUCCESS : " + receivedChannels.size() + ", ERRORS : " + errorChannels.size());
 		}
 	}
 	
