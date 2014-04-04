@@ -11,12 +11,12 @@ import org.json.JSONObject;
 
 import com.pubnub.api.*;
 
-class SubscriberThread implements Runnable {
+class SubscriberRunnable implements Runnable {
 	String[] channels;
 	String id = "";
 	Pubnub pubnub;
 	Subscriber subscriber;
-	SubscriberThread(Subscriber subscriber, Pubnub pubnub, String id, String[] channels) {
+	SubscriberRunnable(Subscriber subscriber, Pubnub pubnub, String id, String[] channels) {
 		this.channels = channels;
 		this.id = id;
 		this.pubnub = pubnub;
@@ -73,7 +73,8 @@ class Subscriber {
 	int id;
 	String origin = "pubsub";
 	private int channelsPerThread;
-	private SubscriberThread[] threads;
+	private SubscriberRunnable[] subRunnables;
+	private Thread[] threads;
 	int channelsIndex = 0;
 	long firstTimestamp = 0L;
 	
@@ -118,7 +119,7 @@ class Subscriber {
 		this.channels = channels;
 		this.noOfThreads = noOfThreads;
 		this.channelsPerThread = this.channels.length / this.noOfThreads;
-		this.threads = new SubscriberThread[this.noOfThreads];
+		this.subRunnables = new SubscriberRunnable[this.noOfThreads];
 		this.origin = origin;
 	}
 	
@@ -141,13 +142,14 @@ class Subscriber {
 			 pn.setDomain("pubnub.co");  // only if required
 			  
 			 */
-			threads[i] = new SubscriberThread(this, pn, "sub_thread-" + (i + 1) + "-" + id,ch);
+			subRunnables[i] = new SubscriberRunnable(this, pn, "sub_thread-" + (i + 1) + "-" + id,ch);
+			threads[i] = new Thread(subRunnables[i]);
 		}
 	}
 	
 	void start() {
 		for (int i = 0; i < this.noOfThreads; i++) {
-			threads[i].run();
+			threads[i].start();
 		}
 	}
 

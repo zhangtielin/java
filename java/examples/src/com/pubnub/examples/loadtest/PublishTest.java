@@ -35,6 +35,7 @@ public class PublishTest {
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("int").withLongOpt("no_of_messages").
 				withType(Number.class).withDescription("Number of Messages").create());
+		
 		options.addOption(OptionBuilder.hasArg().withArgName("int").withLongOpt("no_of_workers").
 				withType(Number.class).withDescription("Number of Workers").create());
 

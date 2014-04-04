@@ -6,13 +6,24 @@ import org.json.JSONObject;
 
 import com.pubnub.api.*;
 
-class PublisherThread implements Runnable {
+class PublisherRunnable implements Runnable {
 	String id = "";
 	JSONArray messageArray;
 	Pubnub pubnub;
 	Publisher publisher;
-
+	volatile boolean start = false;
+	
 	public void run() {
+		
+		while(!start) {
+			//System.out.println(start);
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		for (int i = 0; i < messageArray.length(); i++) {
 			try {
 				final JSONObject message = messageArray.getJSONObject(i);
@@ -43,10 +54,11 @@ class PublisherThread implements Runnable {
 				System.out.println(e);
 			}
 		}
+
 		
 	}
 	
-	PublisherThread(Publisher publisher, Pubnub pubnub, String id, JSONArray messageArray) {
+	PublisherRunnable(Publisher publisher, Pubnub pubnub, String id, JSONArray messageArray) {
 		this.id = id;
 		this.messageArray = messageArray;
 		this.pubnub = pubnub;
@@ -62,7 +74,8 @@ class Publisher {
 	private JSONArray responses;
 	private int id;
 	private int noOfThreads = 1;
-	private PublisherThread[] threads;
+	private PublisherRunnable[] pubRunnables;
+	private Thread[] threads;
 	private int messagesPerThread = 0;
 	private int messageIndex = 0;
 	private long startTimestamp = 0L;
@@ -76,7 +89,8 @@ class Publisher {
 		this.noOfThreads = noOfThreads;
 		this.id = id;
 		this.messagesPerThread = this.messages.length / this.noOfThreads;
-		this.threads = new PublisherThread[this.noOfThreads];
+		this.threads = new Thread[this.noOfThreads];
+		this.pubRunnables = new PublisherRunnable[this.noOfThreads];
 	}
 	
 	void init() {
@@ -89,15 +103,30 @@ class Publisher {
 				messageArray.put(this.messages[j + this.messageIndex]);
 			}
 			this.messageIndex += messageCount;
-			threads[i] = new PublisherThread(this, this.pubnub, "pub_thread-" + (i + 1) + "-" + id,messageArray);
+			pubRunnables[i] = new PublisherRunnable(this, this.pubnub, "pub_thread-" + (i + 1) + "-" + id,messageArray);
+			threads[i] = new Thread(pubRunnables[i]);
 		}
 	}
 	
 	void start() {
+		
+		for (int i = 0; i < this.noOfThreads; i++) {
+			threads[i].start();
+		}
+		
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		
 		startTimestamp = System.currentTimeMillis();
 		for (int i = 0; i < this.noOfThreads; i++) {
-			threads[i].run();
+			pubRunnables[i].start = true;
+			//System.out.println(threads[i].start);
 		}
+		
 	}
 	synchronized void gotResponse(JSONObject response) {
 		this.responses.put(response);

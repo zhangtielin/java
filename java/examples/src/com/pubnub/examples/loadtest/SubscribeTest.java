@@ -43,8 +43,10 @@ public class SubscribeTest {
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("int").withLongOpt("no_of_channels").
 				withType(Number.class).withDescription("Number of Channels").create());
+		
 		options.addOption(OptionBuilder.hasArg().withArgName("int").withLongOpt("start_index").
 				withType(Number.class).withDescription("Start Index. when == 200 , messages start at 201").create());
+		
 		options.addOption(OptionBuilder.hasArg().withArgName("int").withLongOpt("no_of_workers").
 				withType(Number.class).withDescription("Number of Workers").create());
 
