@@ -103,7 +103,7 @@ class Publisher {
 		this.responses.put(response);
 		if ( this.responses.length() == this.messages.length) {
 			this.endTimestamp = System.currentTimeMillis();
-			System.out.println("Time taken in milliseconds for " + this.messages.length + " messages to publish successfully : " + (this.endTimestamp - this.startTimestamp));
+			System.err.println("Time taken in milliseconds for " + this.messages.length + " messages to publish successfully : " + (this.endTimestamp - this.startTimestamp));
 			pubnub.shutdown();
 		}
 	}
