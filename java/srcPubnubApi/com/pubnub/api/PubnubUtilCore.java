@@ -4,8 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -121,6 +123,7 @@ class PubnubUtilCore {
 
         StringBuffer sb = new StringBuffer();
         boolean first = true;
+        
         Enumeration e = ht.keys();
 
         while (e.hasMoreElements()) {
@@ -137,6 +140,35 @@ class PubnubUtilCore {
         return sb.toString();
 
     }
+    
+	public static String hashTableKeysToDelimitedStringSorted(
+			Hashtable ch, String delimiter) {
+	
+
+        StringBuffer sb = new StringBuffer();
+        boolean first = true;
+        
+        Hashtable channels = (Hashtable) ch.clone();
+        
+        java.util.Vector vec =new java.util.Vector(channels.keySet()); 
+        Collections.sort(vec);
+        
+        Iterator it = vec.iterator();
+          
+        while(it.hasNext()) {
+            String s = (String) it.next();
+            if (first) {
+                sb.append(s);
+                first = false;
+            } else {
+                sb.append(delimiter).append(s);
+            }
+
+        }
+
+        return sb.toString();
+		
+	}
 
     static Hashtable hashtableClone(Hashtable ht) {
         if (ht == null)

@@ -51,7 +51,7 @@ class Subscriptions {
     }
 
     public String getChannelString() {
-        return PubnubUtil.hashTableKeysToDelimitedString(channels, ",");
+        return PubnubUtil.hashTableKeysToDelimitedStringSorted(channels, ",");
 
     }
 
