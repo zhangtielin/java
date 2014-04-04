@@ -14,16 +14,16 @@ class PublisherRunnable implements Runnable {
 	volatile boolean start = false;
 	
 	public void run() {
-		
+		/*
 		while(!start) {
-			//System.out.println(start);
 			try {
-				Thread.sleep(10);
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		*/
 		for (int i = 0; i < messageArray.length(); i++) {
 			try {
 				final JSONObject message = messageArray.getJSONObject(i);
@@ -109,23 +109,24 @@ class Publisher {
 	}
 	
 	void start() {
-		
+		startTimestamp = System.currentTimeMillis();
 		for (int i = 0; i < this.noOfThreads; i++) {
-			threads[i].start();
+			//threads[i].start();
+			pubRunnables[i].run(); // add publish messages serially for now
 		}
-		
+		/*
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		*/
 		
-		
-		startTimestamp = System.currentTimeMillis();
+		/*
 		for (int i = 0; i < this.noOfThreads; i++) {
 			pubRunnables[i].start = true;
-			//System.out.println(threads[i].start);
 		}
+		*/
 		
 	}
 	synchronized void gotResponse(JSONObject response) {

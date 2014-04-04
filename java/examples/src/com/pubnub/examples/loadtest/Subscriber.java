@@ -149,7 +149,8 @@ class Subscriber {
 	
 	void start() {
 		for (int i = 0; i < this.noOfThreads; i++) {
-			threads[i].start();
+			//threads[i].start();
+			subRunnables[i].run(); // add serially for now 
 		}
 	}
 
