@@ -140,6 +140,7 @@ class HttpClientCore extends HttpClient {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+        System.out.println(jso);
         int rc = HttpURLConnection.HTTP_INTERNAL_ERROR;
         try {
             rc = connection.getResponseCode();
