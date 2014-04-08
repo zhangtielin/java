@@ -46,6 +46,27 @@ public class Pubnub extends PubnubCoreShared {
                   String cipher_key, boolean ssl_on) {
         super(publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
     }
+    
+    /**
+     * Pubnub Constructor
+     *
+     * @param publish_key
+     *            Publish Key
+     * @param subscribe_key
+     *            Subscribe Key
+     * @param secret_key
+     *            Secret Key
+     * @param cipher_key
+     *            Cipher Key
+     * @param ssl_on
+     *            SSL on ?
+     * @param nonSubscribeWorkers
+     *        Number of Workers for publish, history, hereNow
+     */
+    public Pubnub(String publish_key, String subscribe_key, String secret_key,
+                  String cipher_key, boolean ssl_on, int nonSubscribeWorkers) {
+        super(publish_key, subscribe_key, secret_key, cipher_key, ssl_on, nonSubscribeWorkers);
+    }
 
     /**
      * Pubnub Constructor

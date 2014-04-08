@@ -81,6 +81,7 @@ class Publisher {
 	private long startTimestamp = 0L;
 	private long endTimestamp = 0L;
 	private int publishResponses = 0;
+	private volatile Long startTimetoken = 0L;
 	
 	Publisher(int id, int noOfThreads, Pubnub pubnub, JSONObject[] messages) {
 		this.messages = messages;
@@ -91,6 +92,10 @@ class Publisher {
 		this.messagesPerThread = this.messages.length / this.noOfThreads;
 		this.threads = new Thread[this.noOfThreads];
 		this.pubRunnables = new PublisherRunnable[this.noOfThreads];
+	}
+	
+	void setStartTimetoken(Long timetoken) {
+		startTimetoken = timetoken;
 	}
 	
 	void init() {
@@ -133,7 +138,11 @@ class Publisher {
 		this.responses.put(response);
 		if ( this.responses.length() == this.messages.length) {
 			this.endTimestamp = System.currentTimeMillis();
-			System.err.println("Time taken in milliseconds for " + this.messages.length + " messages to publish successfully : " + (this.endTimestamp - this.startTimestamp));
+			if (startTimetoken != 0) {
+				System.err.println("Start Timetoken " + this.startTimetoken + " ( This can be used on susbcriber end )");
+			}
+			System.err.println("Time taken in milliseconds for " +
+			this.messages.length + " messages to publish successfully : " + (this.endTimestamp - this.startTimestamp));
 			pubnub.shutdown();
 		}
 	}

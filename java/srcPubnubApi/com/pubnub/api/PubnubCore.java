@@ -529,7 +529,13 @@ abstract class PubnubCore {
         this.init(publish_key, subscribe_key, secret_key, "", false);
     }
 
-    /**
+    public PubnubCore(String publish_key, String subscribe_key,
+			String secret_key, String cipher_key, boolean ssl_on,
+			int nonSubscribeWorkers) {
+    	this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on, null, nonSubscribeWorkers);
+	}
+
+	/**
      *
      * Initialize PubNub Object State.
      *
@@ -749,7 +755,7 @@ abstract class PubnubCore {
         String msgStr = message.toString();
 
 
-        if (this.CIPHER_KEY.length() > 0) {
+        if (this.CIPHER_KEY != null &&  this.CIPHER_KEY.length() > 0) {
             // Encrypt Message
             PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY, this.IV);
             try {
@@ -1599,7 +1605,7 @@ abstract class PubnubCore {
 
     private void decryptJSONArray(JSONArray messages) throws JSONException, DataLengthException, IllegalStateException, InvalidCipherTextException, IOException {
 
-        if (CIPHER_KEY.length() > 0) {
+        if (CIPHER_KEY != null && CIPHER_KEY.length() > 0) {
             for (int i = 0; i < messages.length(); i++) {
                 PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY, IV);
 
@@ -1746,7 +1752,7 @@ abstract class PubnubCore {
                                     .getChannel(_channels[i]);
                             if (_channel != null) {
                                 JSONObject jsobj = null;
-                                if (CIPHER_KEY.length() > 0
+                                if (CIPHER_KEY != null && CIPHER_KEY.length() > 0
                                         && !_channel.name
                                         .endsWith(PRESENCE_SUFFIX)) {
                                     PubnubCrypto pc = new PubnubCrypto(
@@ -1816,7 +1822,7 @@ abstract class PubnubCore {
 
                         if (_channel != null) {
                             for (int i = 0; i < messages.length(); i++) {
-                                if (CIPHER_KEY.length() > 0
+                                if (CIPHER_KEY != null && CIPHER_KEY.length() > 0
                                         && !_channel.name
                                         .endsWith(PRESENCE_SUFFIX)) {
                                     PubnubCrypto pc = new PubnubCrypto(

@@ -1,6 +1,7 @@
 package com.pubnub.examples.loadtest;
 
 import org.apache.commons.cli.*;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,11 +28,30 @@ public class PublishTest {
 		int noOfMessages = 10000;
 		int workers = 100;
 		String origin = "pubsub";
+		String publish_key = "demo";
+		String subscribe_key = "demo";
+		String secret_key = "demo";
+		boolean ssl = false;
+		String cipher_key = null;
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("prefix").
 				withType(String.class).withDescription("for creating unique channel names").create());
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("origin").
 				withType(String.class).withDescription("Origin ( Ex. pubsub )").create());
+		
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("publish_key").
+				withType(String.class).withDescription("Publish Key ( default: 'demo' )").create());
+		
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("subscribe_key").
+				withType(String.class).withDescription("Subscribe Key ( default: 'demo' )").create());
+		
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("secret_key").
+				withType(String.class).withDescription("Secret Key ( default: 'demo' )").create());
+		
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("cipher_key").
+				withType(String.class).withDescription("Cipher Key ( default: null )").create());
+		
+		options.addOption(OptionBuilder.withLongOpt("ssl-on").withDescription("SSL on/off ? ( default: off )").create());
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("int").withLongOpt("no_of_messages").
 				withType(Number.class).withDescription("Number of Messages").create());
@@ -85,6 +105,51 @@ public class PublishTest {
 			}
 		}
 		
+		if (cmd.hasOption("publish_key")) {
+			try {
+				publish_key = cmd.getOptionValue("publish_key");
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
+		
+		if (cmd.hasOption("subscribe_key")) {
+			try {
+				subscribe_key = cmd.getOptionValue("subscribe_key");
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
+		
+		if (cmd.hasOption("secret_key")) {
+			try {
+				secret_key = cmd.getOptionValue("secret_key");
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
+		
+		if (cmd.hasOption("cipher_key")) {
+			try {
+				cipher_key = cmd.getOptionValue("cipher_key");
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
+		
+		if (cmd.hasOption("ssl-on")) {
+			try {
+				ssl = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
+		
 		
 		/*
 		String prefix = (args.length > 0)?args[0] + "-":"";
@@ -93,13 +158,15 @@ public class PublishTest {
 		String origin = (args.length > 3)?args[3]:"pubsub";
 		*/
 		
-		Pubnub pubnub = new Pubnub("demo", "demo", workers);
+		Pubnub pubnub = new Pubnub(publish_key, subscribe_key, secret_key, cipher_key, ssl, workers);
 		
 	    pubnub.setCacheBusting(false);
         pubnub.setOrigin(origin);
 			 //pn.setDomain("pubnub.co");  // only if required
 		  
 
+        
+        
 		JSONObject[] jsoArray = new JSONObject[noOfMessages];
 		
 		for ( int i = 0; i < noOfMessages; i++) {
@@ -113,7 +180,24 @@ public class PublishTest {
 			jsoArray[i] = jso;
 		}
 		
-		Publisher publisher = new Publisher(1234, noOfMessages, pubnub, jsoArray);
+		final Publisher publisher = new Publisher(1234, noOfMessages, pubnub, jsoArray);
+        pubnub.time(new Callback(){
+        	@Override
+        	public void successCallback(String channel, Object response) {
+        		try {
+					publisher.setStartTimetoken((Long)(new JSONArray(response.toString()).get(0)));
+				} catch (JSONException e) {
+					
+				}
+        	}
+        });
+        try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		publisher.init();
 		publisher.start();
 		

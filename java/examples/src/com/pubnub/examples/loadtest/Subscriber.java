@@ -16,11 +16,13 @@ class SubscriberRunnable implements Runnable {
 	String id = "";
 	Pubnub pubnub;
 	Subscriber subscriber;
-	SubscriberRunnable(Subscriber subscriber, Pubnub pubnub, String id, String[] channels) {
+	Long timetoken = 0L;
+	SubscriberRunnable(Subscriber subscriber, Pubnub pubnub, String id, String[] channels, long timetoken) {
 		this.channels = channels;
 		this.id = id;
 		this.pubnub = pubnub;
 		this.subscriber = subscriber;
+		this.timetoken = timetoken;
 	}
 	public void run() {
 		try {
@@ -47,18 +49,18 @@ class SubscriberRunnable implements Runnable {
 				}
 				@Override
 				public void errorCallback(String channel, PubnubError error) {
-					System.out.println("ERROR on channel : " + channel);
+					System.out.println("ERROR on channel : " + channel + " , " + error);
 					subscriber.errors(channel);
 				}
-				
-			});
+
+			}, timetoken);
 		} catch (PubnubException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 }
 
 
@@ -72,12 +74,18 @@ class Subscriber {
 	int noOfThreads;
 	int id;
 	String origin = "pubsub";
+	String publish_key = "demo";
+	String subscribe_key = "demo";
+	String secret_key = "demo";
+	String cipher_key = "demo";
+	boolean ssl = false;
 	private int channelsPerThread;
 	private SubscriberRunnable[] subRunnables;
 	private Thread[] threads;
 	int channelsIndex = 0;
 	long firstTimestamp = 0L;
-	
+	long timetoken = 0L;
+
 	synchronized void connected(String channel) {
 		connectedChannels.add(channel);
 		if (connectedChannels.size() == channels.length) {
@@ -88,33 +96,40 @@ class Subscriber {
 		receivedChannels.add(channel);
 		if (firstTimestamp == 0) {
 			firstTimestamp = System.currentTimeMillis();
-		}
+		}/*
 		System.out.println("Received = " + receivedChannels.size());
 		System.out.println("Errors = " + errorChannels.size());
-                if ( inputChannels.size() - (receivedChannels.size() + errorChannels.size()) < 100 ) {
-		    System.err.println("Received = " + receivedChannels.size());
-		    System.err.println("Errors = " + errorChannels.size());
-
-                }
+		*/
+		if ( inputChannels.size() - (receivedChannels.size() + errorChannels.size()) < 50 ) {
+			System.err.println("Received = " + receivedChannels.size() + ", Errors = " + errorChannels.size());
+		}
+		
 		if (receivedChannels.size() + errorChannels.size() == channels.length) {
 			System.err.println("MESSAGES FOR ALL CHANNELS RECEIVED . SUCCESS : " + receivedChannels.size() + ", ERRORS : " + errorChannels.size());
 			System.err.println("Difference ( in ms ) between timestamp of last and first received message : " + 
 					(System.currentTimeMillis() - firstTimestamp));
 		}
 	}
-	
+
 	synchronized void errors(String channel) {
 		errorChannels.add(channel);
+		/*
 		System.out.println("Received = " + receivedChannels.size());
 		System.out.println("Errors = " + errorChannels.size());
+		*/ 
+		if ( inputChannels.size() - (receivedChannels.size() + errorChannels.size()) < 50 ) {
+			System.err.println("Received = " + receivedChannels.size() + ", Errors = " + errorChannels.size());
+		}
 		if (receivedChannels.size() + errorChannels.size() == channels.length) {
 			System.err.println("MESSAGES FOR ALL CHANNELS RECEIVED . SUCCESS : " + receivedChannels.size() + ", ERRORS : " + errorChannels.size());
 		}
 	}
-	
-	
-	
-	Subscriber(int id, String[] channels, int noOfThreads, String origin) {
+
+
+
+	Subscriber(int id, String[] channels, int noOfThreads, 
+			String origin, String publish_key, String subscribe_key, String secret_key, 
+			String cipher_key, boolean ssl, Long timetoken) {
 		this.id = id;
 		this.channels = channels;
 		this.noOfThreads = noOfThreads;
@@ -122,32 +137,38 @@ class Subscriber {
 		this.subRunnables = new SubscriberRunnable[this.noOfThreads];
 		this.threads = new Thread[this.noOfThreads];
 		this.origin = origin;
+		this.publish_key = publish_key;
+		this.subscribe_key = subscribe_key;
+		this.secret_key = secret_key;
+		this.cipher_key = cipher_key;
+		this.ssl = ssl;
+		this.timetoken = timetoken;
 	}
-	
+
 	void init() {
 		for (int i = 0; i < this.noOfThreads; i++) {
 			int channelsLeft = this.channels.length - this.channelsIndex;
 			int channelsCount = (channelsLeft > this.channelsPerThread)?this.channelsPerThread: channelsLeft;
 			String[] ch = new String[channelsCount];
-			
+
 			for (int j = 0; j < channelsCount; j++) {
 				ch[j] = this.channels[j + this.channelsIndex];
 				inputChannels.add(ch[j]);
 			}
 			this.channelsIndex += channelsCount;
-			Pubnub pn = new Pubnub("demo", "demo");
-			
-			 pn.setCacheBusting(false);
-			 pn.setOrigin(origin);
-			 /*
+			Pubnub pn = new Pubnub(publish_key, subscribe_key, secret_key, cipher_key, ssl);
+
+			pn.setCacheBusting(false);
+			pn.setOrigin(origin);
+			/*
 			 pn.setDomain("pubnub.co");  // only if required
-			  
+
 			 */
-			subRunnables[i] = new SubscriberRunnable(this, pn, "sub_thread-" + (i + 1) + "-" + id,ch);
+			subRunnables[i] = new SubscriberRunnable(this, pn, "sub_thread-" + (i + 1) + "-" + id,ch, timetoken);
 			threads[i] = new Thread(subRunnables[i]);
 		}
 	}
-	
+
 	void start() {
 		for (int i = 0; i < this.noOfThreads; i++) {
 			//threads[i].start();

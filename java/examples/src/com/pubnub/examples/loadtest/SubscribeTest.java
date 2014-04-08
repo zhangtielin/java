@@ -34,12 +34,37 @@ public class SubscribeTest {
 		int noOfChannels = 10000;
 		int workers = 10000;
 		String origin = "pubsub";
-		int startIndex = 0; 
+		int startIndex = 0;
+		String publish_key = "demo";
+		String subscribe_key = "demo";
+		String secret_key = "demo";
+		boolean ssl = false;
+		String cipher_key = null;
+		Long timetoken = 0L;
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("prefix").
 				withType(String.class).withDescription("for creating unique channel names").create());
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("origin").
 				withType(String.class).withDescription("Origin ( Ex. pubsub )").create());
+		
+		
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("publish_key").
+				withType(String.class).withDescription("Publish Key ( default: 'demo' )").create());
+		
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("subscribe_key").
+				withType(String.class).withDescription("Subscribe Key ( default: 'demo' )").create());
+		
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("secret_key").
+				withType(String.class).withDescription("Secret Key ( default: 'demo' )").create());
+		
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("cipher_key").
+				withType(String.class).withDescription("Cipher Key ( default: null )").create());
+		
+		options.addOption(OptionBuilder.hasArg().withArgName("Long").withLongOpt("timetoken").
+				withType(Long.class).withDescription("Timetoken ( optional )").create());
+		
+		options.addOption(OptionBuilder.withLongOpt("ssl-on").
+				withType(Boolean.class).withDescription("SSL on/off ? ( default: off )").create());
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("int").withLongOpt("no_of_channels").
 				withType(Number.class).withDescription("Number of Channels").create());
@@ -104,6 +129,57 @@ public class SubscribeTest {
 			}
 		}
 		
+		if (cmd.hasOption("timetoken")) {
+			try {
+				timetoken = Long.parseLong(cmd.getOptionValue("timetoken"));
+			} catch (Exception e) {
+				usage(options);return;
+			}
+		}
+		if (cmd.hasOption("publish_key")) {
+			try {
+				publish_key = cmd.getOptionValue("publish_key");
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
+		
+		if (cmd.hasOption("subscribe_key")) {
+			try {
+				subscribe_key = cmd.getOptionValue("subscribe_key");
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
+		
+		if (cmd.hasOption("secret_key")) {
+			try {
+				secret_key = cmd.getOptionValue("secret_key");
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
+		
+		if (cmd.hasOption("cipher_key")) {
+			try {
+				cipher_key = cmd.getOptionValue("cipher_key");
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
+		
+		if (cmd.hasOption("ssl-on")) {
+			try {
+				ssl = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
 		
 		/*
 		
@@ -121,7 +197,8 @@ public class SubscribeTest {
 			channels[i] = "channel-" + prefix + ( startIndex + i+1);
 		}
 		
-		Subscriber subscriber = new Subscriber(1234, channels, workers, origin);
+		Subscriber subscriber = new Subscriber(1234, channels, workers, origin,
+				publish_key, subscribe_key, secret_key, cipher_key, ssl, timetoken);
 		subscriber.init();
 		subscriber.start();
 	}

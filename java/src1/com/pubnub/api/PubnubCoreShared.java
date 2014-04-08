@@ -45,6 +45,25 @@ abstract class PubnubCoreShared extends PubnubCore {
                   String cipher_key, boolean ssl_on) {
         super(publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
     }
+    
+    /**
+     * Pubnub Constructor
+     *
+     * @param publish_key
+     *            Publish Key
+     * @param subscribe_key
+     *            Subscribe Key
+     * @param secret_key
+     *            Secret Key
+     * @param cipher_key
+     *            Cipher Key
+     * @param ssl_on
+     *            SSL on ?
+     */
+    public PubnubCoreShared(String publish_key, String subscribe_key, String secret_key,
+                  String cipher_key, boolean ssl_on, int nonSubscribeWorkers) {
+        super(publish_key, subscribe_key, secret_key, cipher_key, ssl_on, nonSubscribeWorkers);
+    }
 
     /**
      * Pubnub Constructor
@@ -289,8 +308,6 @@ abstract class PubnubCoreShared extends PubnubCore {
         if (auth_key != null && auth_key.length() > 0 ) parameters.put("auth", auth_key);
         if (ttl >= -1) parameters.put("ttl", String.valueOf(ttl));
         
-        System.out.println(parameters);
-
         String[] urlComponents = { getPubnubUrl(), "v1", "auth", "grant", "sub-key",
                                    this.SUBSCRIBE_KEY
                                  };

@@ -130,7 +130,8 @@ class HttpClientCore extends HttpClient {
             throw new PubnubException(getErrorObject(PNERROBJ_CONNECT_EXCEPTION, url + " : " + e.toString()));
         }
         */
-        long requestSendingTimestamp = System.currentTimeMillis();
+        /*
+        
         JSONObject jso = new JSONObject();
         try {
         	jso.put("threadId", Thread.currentThread().getId());
@@ -140,7 +141,7 @@ class HttpClientCore extends HttpClient {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        System.out.println(jso);
+		*/
         int rc = HttpURLConnection.HTTP_INTERNAL_ERROR;
         try {
             rc = connection.getResponseCode();
@@ -150,7 +151,8 @@ class HttpClientCore extends HttpClient {
         catch (IOException e) {
             throw new PubnubException(getErrorObject(PNERROBJ_HTTP_RC_ERROR, url + " : " + e.toString()));
         }
-        long responseTimestamp = System.currentTimeMillis();
+        
+        /*
         try {
 			jso.put("responseTimestamp", responseTimestamp);
 			jso.put("requestTimetaken", responseTimestamp - requestSendingTimestamp);
@@ -158,6 +160,7 @@ class HttpClientCore extends HttpClient {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		*/
 
 
         InputStream is = null;
@@ -194,15 +197,15 @@ class HttpClientCore extends HttpClient {
 			} catch (IOException e) {
 			}
         }
-
+        /*
         try {
 			jso.put("response", page);
 	        jso.put("responseCode", rc);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		*/
         
-        System.out.println(jso);
         log.verbose("URL = " + url + ", Status Code : "  + rc + ", : RESPONSE = " + page);
         switch (rc) {
         case HttpURLConnection.HTTP_FORBIDDEN:
@@ -245,7 +248,6 @@ class HttpClientCore extends HttpClient {
                 throw new PubnubException(getErrorObject(PNERROBJ_BAD_REQUEST, page));
             }
         case HttpURLConnection.HTTP_NOT_FOUND:
-        	System.out.println("404 , URL = " + url);
             {
                 JSONObject payload = null;
                 String message = null;
