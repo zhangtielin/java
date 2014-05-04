@@ -40,6 +40,7 @@ public class SubscribeTest {
 		String secret_key = "demo";
 		boolean ssl = false;
 		String cipher_key = null;
+		String auth_key = null;
 		Long timetoken = 0L;
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("prefix").
@@ -59,6 +60,9 @@ public class SubscribeTest {
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("cipher_key").
 				withType(String.class).withDescription("Cipher Key ( default: null )").create());
+
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("auth_key").
+				withType(String.class).withDescription("Auth Key ( default: null )").create());
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("Long").withLongOpt("timetoken").
 				withType(Long.class).withDescription("Timetoken ( optional )").create());
@@ -172,6 +176,15 @@ public class SubscribeTest {
 			}
 		}
 		
+		if (cmd.hasOption("auth_key")) {
+			try {
+				auth_key = cmd.getOptionValue("auth_key");
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
+
 		if (cmd.hasOption("ssl-on")) {
 			try {
 				ssl = true;
@@ -198,7 +211,7 @@ public class SubscribeTest {
 		}
 		
 		Subscriber subscriber = new Subscriber(1234, channels, workers, origin,
-				publish_key, subscribe_key, secret_key, cipher_key, ssl, timetoken);
+				publish_key, subscribe_key, secret_key, cipher_key, ssl, timetoken, auth_key);
 		subscriber.init();
 		subscriber.start();
 	}

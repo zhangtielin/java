@@ -78,6 +78,7 @@ class Subscriber {
 	String subscribe_key = "demo";
 	String secret_key = "demo";
 	String cipher_key = "demo";
+	String auth_key = null;
 	boolean ssl = false;
 	private int channelsPerThread;
 	private SubscriberRunnable[] subRunnables;
@@ -129,7 +130,7 @@ class Subscriber {
 
 	Subscriber(int id, String[] channels, int noOfThreads, 
 			String origin, String publish_key, String subscribe_key, String secret_key, 
-			String cipher_key, boolean ssl, Long timetoken) {
+			String cipher_key, boolean ssl, Long timetoken, String auth_key) {
 		this.id = id;
 		this.channels = channels;
 		this.noOfThreads = noOfThreads;
@@ -143,6 +144,7 @@ class Subscriber {
 		this.cipher_key = cipher_key;
 		this.ssl = ssl;
 		this.timetoken = timetoken;
+		this.auth_key = auth_key;
 	}
 
 	void init() {
@@ -160,6 +162,7 @@ class Subscriber {
 
 			pn.setCacheBusting(false);
 			pn.setOrigin(origin);
+			if (auth_key != null) pn.setAuthKey(auth_key);
 			/*
 			 pn.setDomain("pubnub.co");  // only if required
 

@@ -33,6 +33,7 @@ public class PublishTest {
 		String secret_key = "demo";
 		boolean ssl = false;
 		String cipher_key = null;
+		String auth_key = null;
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("prefix").
 				withType(String.class).withDescription("for creating unique channel names").create());
@@ -50,7 +51,10 @@ public class PublishTest {
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("cipher_key").
 				withType(String.class).withDescription("Cipher Key ( default: null )").create());
-		
+
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("auth_key").
+				withType(String.class).withDescription("Auth Key").create());
+
 		options.addOption(OptionBuilder.withLongOpt("ssl-on").withDescription("SSL on/off ? ( default: off )").create());
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("int").withLongOpt("no_of_messages").
@@ -140,6 +144,15 @@ public class PublishTest {
 				usage(options);return;
 			}
 		}
+
+		if (cmd.hasOption("auth_key")) {
+			try {
+				auth_key = cmd.getOptionValue("auth_key");
+			} catch (Exception e) {
+				e.printStackTrace();
+				usage(options);return;
+			}
+		}
 		
 		if (cmd.hasOption("ssl-on")) {
 			try {
@@ -162,7 +175,10 @@ public class PublishTest {
 		
 	    pubnub.setCacheBusting(false);
         pubnub.setOrigin(origin);
-			 //pn.setDomain("pubnub.co");  // only if required
+
+        if (auth_key != null) pubnub.setAuthKey(auth_key);
+
+		//pn.setDomain("pubnub.co");  // only if required
 		  
 
         
