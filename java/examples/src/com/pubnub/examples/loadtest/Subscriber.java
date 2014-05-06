@@ -17,6 +17,7 @@ class SubscriberRunnable implements Runnable {
 	Pubnub pubnub;
 	Subscriber subscriber;
 	Long timetoken = 0L;
+	Long starttime = 0L;
 	SubscriberRunnable(Subscriber subscriber, Pubnub pubnub, String id, String[] channels, long timetoken) {
 		this.channels = channels;
 		this.id = id;
@@ -26,6 +27,7 @@ class SubscriberRunnable implements Runnable {
 	}
 	public void run() {
 		try {
+			starttime = System.currentTimeMillis();
 			pubnub.subscribe(this.channels, new Callback(){
 				@Override
 				public void successCallback(String channel, Object response) {
@@ -46,6 +48,10 @@ class SubscriberRunnable implements Runnable {
 				@Override
 				public void connectCallback(String channel, Object response) {
 					subscriber.connected(channel);
+					long connecttime = System.currentTimeMillis();
+                    System.out.println(channel+" connected "+  connecttime +
+
+                            " time since start "+ (connecttime - starttime));
 				}
 				@Override
 				public void errorCallback(String channel, PubnubError error) {

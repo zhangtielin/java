@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import com.pubnub.api.Pubnub;
 
 public class SubscribeTest {
-
+	//public static long starttime;
 	private static void usage(Options options){
 
 		HelpFormatter formatter = new HelpFormatter();
@@ -42,6 +42,7 @@ public class SubscribeTest {
 		String cipher_key = null;
 		String auth_key = null;
 		Long timetoken = 0L;
+		
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("prefix").
 				withType(String.class).withDescription("for creating unique channel names").create());
@@ -209,6 +210,9 @@ public class SubscribeTest {
 		for ( int i = 0; i < noOfChannels; i++) {
 			channels[i] = "channel-" + prefix + ( startIndex + i+1);
 		}
+		
+		//starttime = System.currentTimeMillis();
+		//System.out.println("initialize start time "+starttime);
 		
 		Subscriber subscriber = new Subscriber(1234, channels, workers, origin,
 				publish_key, subscribe_key, secret_key, cipher_key, ssl, timetoken, auth_key);
