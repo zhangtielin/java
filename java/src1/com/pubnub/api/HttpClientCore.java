@@ -142,6 +142,8 @@ class HttpClientCore extends HttpClient {
 			e1.printStackTrace();
 		}
 		*/
+        
+        long starttime = System.currentTimeMillis();
         int rc = HttpURLConnection.HTTP_INTERNAL_ERROR;
         try {
             rc = connection.getResponseCode();
@@ -205,8 +207,8 @@ class HttpClientCore extends HttpClient {
 			e.printStackTrace();
 		}
 		*/
-        
-        log.verbose("URL = " + url + ", Status Code : "  + rc + ", : RESPONSE = " + page);
+
+        System.out.println( "" + (System.currentTimeMillis() - starttime) + " URL = " + url + ", Status Code : "  + rc + ", : RESPONSE = " + page);
         switch (rc) {
         case HttpURLConnection.HTTP_FORBIDDEN:
             {
