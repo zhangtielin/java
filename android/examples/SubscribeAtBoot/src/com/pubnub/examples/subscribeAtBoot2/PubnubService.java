@@ -1,5 +1,8 @@
-package com.pubnub.examples.subscribeAtBoot;
+package com.pubnub.examples.subscribeAtBoot2;
 
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
@@ -18,7 +21,7 @@ import android.widget.Toast;
 
 public class PubnubService extends Service {
 
-    String channel = "hello_world";
+    String channel = "pubnubatboot";
     Pubnub pubnub = new Pubnub("demo", "demo", false);
     PowerManager.WakeLock wl = null;
 
@@ -50,6 +53,13 @@ public class PubnubService extends Service {
             handler.sendMessage(msg);
             Log.i("Received msg : ", obj.toString());
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            r.play();
         } catch (Exception e) {
             e.printStackTrace();
         }
