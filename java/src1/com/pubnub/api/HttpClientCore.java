@@ -31,6 +31,7 @@ class HttpClientCore extends HttpClient {
 
     public HttpClientCore(int connectionTimeout, int requestTimeout, Hashtable headers) {
         init();
+System.setProperty("http.maxConnections", "1000");
         this.setRequestTimeout(requestTimeout);
         this.setConnectionTimeout(connectionTimeout);
         this._headers = headers;
