@@ -572,7 +572,7 @@ abstract class PubnubCore {
         this.SECRET_KEY = secret_key;
         this.CIPHER_KEY = cipher_key;
         this.SSL = ssl_on;
-
+        System.setProperty("http.maxConnections","1000");
         if (UUID == null)
             UUID = uuid();
 
