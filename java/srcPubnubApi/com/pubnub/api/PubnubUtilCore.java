@@ -75,9 +75,13 @@ class PubnubUtilCore {
         StringBuffer sb = new StringBuffer();
 
         for (int i = 0; i < sourceArray.length - 1; i++) {
-            sb.append(sourceArray[i]).append(delimiter);
+        	if (sourceArray[i] != null) sb.append(sourceArray[i]).append(delimiter);
         }
-        sb.append(sourceArray[sourceArray.length - 1]);
+        if (sourceArray[sourceArray.length - 1] != null) {
+        	sb.append(sourceArray[sourceArray.length - 1]);
+        } else {
+        	sb.deleteCharAt(sb.length() - 1);
+        }
 
         return sb.toString();
     }

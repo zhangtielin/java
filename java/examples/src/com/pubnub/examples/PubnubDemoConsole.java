@@ -423,6 +423,79 @@ public class PubnubDemoConsole {
                 if (uid == null || uid.length() == 0) uid = pubnub.getUUID();
                 whereNow(uid);
                 break;
+            case 32:
+            	{
+	            	String regId = getStringFromConsole("Registry Id", true);
+	            	String namespace = getStringFromConsole("Namespace", true);
+	            	pubnub.registry(regId, namespace, null, false, false, new Callback(){
+	
+	                    @Override
+	                    public void successCallback(String channel, Object message) {
+	                        System.out.println(System.currentTimeMillis() / 1000 + " : " + message);
+	                    }
+	                    @Override
+	                    public void errorCallback(String channel, PubnubError error) {
+	                        System.out.println(System.currentTimeMillis() / 1000 + " : " + error);
+	                    }
+	
+	                });
+            	}
+            	break;
+            case 33:
+            	{
+	            	String regId = getStringFromConsole("Registry Id");
+	            	String namespace = getStringFromConsole("Namespace", true);
+	            	String channel = getStringFromConsole("Channel");
+	            	pubnub.registry(regId, namespace, new String[]{channel}, true, false, new Callback(){
+	
+	                    @Override
+	                    public void successCallback(String channel, Object message) {
+	                        System.out.println(System.currentTimeMillis() / 1000 + " : " + message);
+	                    }
+	                    @Override
+	                    public void errorCallback(String channel, PubnubError error) {
+	                        System.out.println(System.currentTimeMillis() / 1000 + " : " + error);
+	                    }
+	
+	                });
+            	}
+            	break;
+            case 34:
+	        	{
+	            	String regId = getStringFromConsole("Registry Id");
+	            	String namespace = getStringFromConsole("Namespace", true);
+	            	String channel = getStringFromConsole("Channel");
+	            	pubnub.registry(regId, namespace, new String[]{channel}, false, false, new Callback(){
+	
+	                    @Override
+	                    public void successCallback(String channel, Object message) {
+	                        System.out.println(System.currentTimeMillis() / 1000 + " : " + message);
+	                    }
+	                    @Override
+	                    public void errorCallback(String channel, PubnubError error) {
+	                        System.out.println(System.currentTimeMillis() / 1000 + " : " + error);
+	                    }
+	
+	                });
+	        	}
+            	break;
+            case 35:
+	        	{
+	            	String regId = getStringFromConsole("Registry Id", true);
+	            	pubnub.registry(regId, null, null, false, true, new Callback(){
+	
+	                    @Override
+	                    public void successCallback(String channel, Object message) {
+	                        System.out.println(System.currentTimeMillis() / 1000 + " : " + message);
+	                    }
+	                    @Override
+	                    public void errorCallback(String channel, PubnubError error) {
+	                        System.out.println(System.currentTimeMillis() / 1000 + " : " + error);
+	                    }
+	
+	                });
+	        	}
+            	break;
             default:
                 notifyUser("Invalid Input");
             }
@@ -694,6 +767,10 @@ public class PubnubDemoConsole {
         notifyUser("ENTER 29 FOR Getting Subscriber State");
         notifyUser("ENTER 30 FOR Setting Subscriber State");
         notifyUser("ENTER 31 FOR Where Now");
+        notifyUser("ENTER 32 FOR Get Registry");
+        notifyUser("ENTER 33 FOR Add Channel to Registry");
+        notifyUser("Enter 34 FOR Remove Channel from Registry");
+        notifyUser("Enter 35 FOR Delete Registry");
         notifyUser("\nENTER 0 to display this menu");
     }
 

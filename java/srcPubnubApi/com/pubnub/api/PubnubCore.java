@@ -2,9 +2,12 @@ package com.pubnub.api;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Random;
 
 import org.bouncycastle.crypto.DataLengthException;
@@ -900,7 +903,86 @@ abstract class PubnubCore {
 
         _request(hreq, nonSubscribeManager);
     }
+    /**
+     * Channel Registry handling
+     *
+     * @param args
+     *            Hashtable containing channel name, message, callback
+     */
 
+    public void registry(String registryId, String namespace, String[] channels,
+    		boolean add, boolean removeRegistry, Callback callback) {
+
+        final Callback cb = getWrappedCallback(callback);
+        Hashtable parameters = PubnubUtil.hashtableClone(params);
+        int i = 0;
+        List url = new ArrayList();
+        
+        String[] urlComponents = new String[10];
+        
+        //url.add(getPubnubUrl());
+        //url.add("v1/channel-registration/sub-key");
+        //url.add(this.SUBSCRIBE_KEY);
+        
+        urlComponents[i++] = getPubnubUrl();
+        urlComponents[i++] = "v1/channel-registration/sub-key";
+        urlComponents[i++] = this.SUBSCRIBE_KEY;
+        
+        if (namespace != null && namespace.length() > 0) {
+        	//url.add("user");
+        	//url.add(PubnubUtil.urlEncode(namespace));
+        	urlComponents[i++] = "user";
+        	urlComponents[i++] = PubnubUtil.urlEncode(namespace);
+        	//count += 2;
+        }
+        //url.add("channel-registry");
+        //count += 1;
+        urlComponents[i++] = "channel-registry";
+        
+        if (registryId != null && registryId.length() > 0) {
+        	//url.add(PubnubUtil.urlEncode(registryId));
+        	//count += 1;
+        	urlComponents[i++] = PubnubUtil.urlEncode(registryId);
+        }
+        
+        if (channels != null) {
+        	if (add) {
+        		parameters.put("add", PubnubUtil.joinString(channels, ","));
+        	} else {
+        		parameters.put("remove", PubnubUtil.joinString(channels, ","));
+        	}
+        } else if (removeRegistry) {
+        	//url.add("remove");
+        	//count += 1;
+        	urlComponents[i++] = "remove";
+        }
+        
+
+        
+        class RegistryResponseHandler extends ResponseHandler {
+            public void handleResponse(HttpRequest hreq, String response) {
+                JSONArray jsarr;
+                try {
+                    jsarr = new JSONArray(response);
+                } catch (JSONException e) {
+                    handleError(hreq,
+                            PubnubError.getErrorObject(PubnubError.PNERROBJ_INVALID_JSON, 1, response));
+                    return;
+                }
+                cb.successCallback("", jsarr);
+            }
+
+            public void handleError(HttpRequest hreq, PubnubError error) {
+                cb.errorCallback("", error);
+                return;
+            }
+        }
+
+        HttpRequest hreq = new HttpRequest(urlComponents, parameters, new RegistryResponseHandler());
+
+        _request(hreq, nonSubscribeManager);
+    }
+    
     /**
      *
      * Listen for presence of subscribers on a channel
