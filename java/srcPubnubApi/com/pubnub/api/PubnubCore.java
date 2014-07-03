@@ -29,6 +29,7 @@ abstract class PubnubCore {
     private int HOSTNAME_SUFFIX = 1;
     private String DOMAIN = "pubnub.com";
     private String ORIGIN_STR = null;
+    private String ORIGIN_IP = null;
     protected String PUBLISH_KEY = "";
     protected String SUBSCRIBE_KEY = "";
     protected String SECRET_KEY = "";
@@ -282,8 +283,23 @@ abstract class PubnubCore {
         return subscribeManager.maxRetries;
     }
 
+    public void setOriginIp(String ip) {
+    	ORIGIN_IP = ip;
+    }
+    
+    public String getOriginIp() {
+    	return ORIGIN_IP;
+    }
+    
     protected String getPubnubUrl() {
-
+    	
+    	if (ORIGIN_IP != null && ORIGIN_IP.length() > 8 ) {
+            if (this.SSL) {
+                return  "https://" + ORIGIN_IP;
+            } else {
+            	return  "http://" + ORIGIN_IP;
+            }
+    	}
         if (ORIGIN_STR == null) {
             // SSL On?
             if (this.SSL) {

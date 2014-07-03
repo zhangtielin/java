@@ -34,6 +34,7 @@ public class SubscribeTest {
 		int noOfChannels = 10000;
 		int workers = 10000;
 		String origin = "pubsub";
+		String ip = null;
 		int startIndex = 0;
 		String publish_key = "demo";
 		String subscribe_key = "demo";
@@ -49,6 +50,8 @@ public class SubscribeTest {
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("origin").
 				withType(String.class).withDescription("Origin ( Ex. pubsub )").create());
 		
+		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("ip").
+				withType(String.class).withDescription("Origin IP address").create());
 		
 		options.addOption(OptionBuilder.hasArg().withArgName("String").withLongOpt("publish_key").
 				withType(String.class).withDescription("Publish Key ( default: 'demo' )").create());
@@ -134,6 +137,14 @@ public class SubscribeTest {
 			}
 		}
 		
+		if (cmd.hasOption("ip")) {
+			try {
+				ip = cmd.getOptionValue("ip");
+			} catch (Exception e) {
+				usage(options);return;
+			}
+		}
+		
 		if (cmd.hasOption("timetoken")) {
 			try {
 				timetoken = Long.parseLong(cmd.getOptionValue("timetoken"));
@@ -195,6 +206,8 @@ public class SubscribeTest {
 			}
 		}
 		
+		
+		
 		/*
 		
 		String prefix = (args.length > 0)?args[0] + "-":"";
@@ -214,7 +227,7 @@ public class SubscribeTest {
 		//starttime = System.currentTimeMillis();
 		//System.out.println("initialize start time "+starttime);
 		
-		Subscriber subscriber = new Subscriber(1234, channels, workers, origin,
+		Subscriber subscriber = new Subscriber(1234, channels, workers, origin, ip, 
 				publish_key, subscribe_key, secret_key, cipher_key, ssl, timetoken, auth_key);
 		subscriber.init();
 		subscriber.start();

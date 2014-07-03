@@ -80,6 +80,7 @@ class Subscriber {
 	int noOfThreads;
 	int id;
 	String origin = "pubsub";
+	String ip = null;
 	String publish_key = "demo";
 	String subscribe_key = "demo";
 	String secret_key = "demo";
@@ -135,7 +136,7 @@ class Subscriber {
 
 
 	Subscriber(int id, String[] channels, int noOfThreads, 
-			String origin, String publish_key, String subscribe_key, String secret_key, 
+			String origin, String ip, String publish_key, String subscribe_key, String secret_key, 
 			String cipher_key, boolean ssl, Long timetoken, String auth_key) {
 		this.id = id;
 		this.channels = channels;
@@ -144,6 +145,7 @@ class Subscriber {
 		this.subRunnables = new SubscriberRunnable[this.noOfThreads];
 		this.threads = new Thread[this.noOfThreads];
 		this.origin = origin;
+		this.ip = ip;
 		this.publish_key = publish_key;
 		this.subscribe_key = subscribe_key;
 		this.secret_key = secret_key;
@@ -173,6 +175,9 @@ class Subscriber {
 			 pn.setDomain("pubnub.co");  // only if required
 
 			 */
+			if (ip != null && ip.length() > 8) {
+				pn.setOriginIp(ip);
+			}
 			subRunnables[i] = new SubscriberRunnable(this, pn, "sub_thread-" + (i + 1) + "-" + id,ch, timetoken);
 			threads[i] = new Thread(subRunnables[i]);
 		}
