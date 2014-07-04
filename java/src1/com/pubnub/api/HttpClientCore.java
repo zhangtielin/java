@@ -208,7 +208,7 @@ class HttpClientCore extends HttpClient {
 		}
 		*/
 
-        //System.out.println( "" + (System.currentTimeMillis() - starttime) + " URL = " + url + ", Status Code : "  + rc + ", : RESPONSE = " + page);
+        System.out.println( "" + (System.currentTimeMillis() - starttime) + " URL = " + url + ", Status Code : "  + rc + ", : RESPONSE = " + page);
         switch (rc) {
         case HttpURLConnection.HTTP_FORBIDDEN:
             {
