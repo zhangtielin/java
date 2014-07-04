@@ -26,52 +26,47 @@ class SubscriberRunnable implements Runnable {
 		this.timetoken = timetoken;
 	}
 	public void run() {
-		try {
-			pubnub.subscribe("z", new Callback(){
-				public void connectCallback(String channel, Object response) {
-					try {
-						starttime = System.currentTimeMillis();
-						pubnub.subscribe(channels, new Callback(){
-							@Override
-							public void successCallback(String channel, Object response) {
-								JSONObject jso = (JSONObject)response;
-								long subscriberReceiveTimestamp = System.currentTimeMillis();
-								try {
-									Long publishTimestamp = (Long) jso.get("publishTimestamp");
-									jso.put("subscriberReceiveTimestamp", subscriberReceiveTimestamp);
-									jso.put("timeTakenToRecieveAfterPublish", subscriberReceiveTimestamp - publishTimestamp);
-									System.out.println(jso);
-									subscriber.received(channel);
-								} catch (JSONException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-			
+		pubnub.time(new Callback(){
+			public void successCallback(String channel, Object response) {
+				try {
+					starttime = System.currentTimeMillis();
+					pubnub.subscribe(channels, new Callback(){
+						@Override
+						public void successCallback(String channel, Object response) {
+							JSONObject jso = (JSONObject)response;
+							long subscriberReceiveTimestamp = System.currentTimeMillis();
+							try {
+								Long publishTimestamp = (Long) jso.get("publishTimestamp");
+								jso.put("subscriberReceiveTimestamp", subscriberReceiveTimestamp);
+								jso.put("timeTakenToRecieveAfterPublish", subscriberReceiveTimestamp - publishTimestamp);
+								System.out.println(jso);
+								subscriber.received(channel);
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-							@Override
-							public void connectCallback(String channel, Object response) {
-								subscriber.connected(channel);
-								long connecttime = System.currentTimeMillis();
-			                    System.out.println(channel+" connected "+  connecttime +
-			
-			                            " time since start "+ (connecttime - starttime));
-							}
-							@Override
-							public void errorCallback(String channel, PubnubError error) {
-								System.out.println("ERROR on channel : " + channel + " , " + error);
-								subscriber.errors(channel);
-							}
-			
-						}, timetoken);
-					} catch (PubnubException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+		
+						}
+						@Override
+						public void connectCallback(String channel, Object response) {
+							subscriber.connected(channel);
+							long connecttime = System.currentTimeMillis();
+		                    System.out.println(channel+" connected "+  connecttime +
+		
+		                            " time since start "+ (connecttime - starttime));
+						}
+						@Override
+						public void errorCallback(String channel, PubnubError error) {
+							System.out.println("ERROR on channel : " + channel + " , " + error);
+							subscriber.errors(channel);
+						}
+		
+					}, timetoken);
+				} catch (PubnubException e) {
+					e.printStackTrace();
 				}
-			});
-		} catch (PubnubException e) {
-			e.printStackTrace();
-		}
+			}
+		});
 	}
 
 
