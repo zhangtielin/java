@@ -241,6 +241,21 @@ class HttpClientCore extends HttpClient {
 			throw new PubnubException(getErrorObject(PNERROBJ_UNAUTHORIZED,
 					page));
 		}
+		case HttpURLConnection.HTTP_PAYMENT_REQUIRED : {
+			JSONObject payload = null;
+			String message = null;
+			try {
+				JSONObject pageJso = new JSONObject(page);
+				message = pageJso.getString("message");
+				payload = pageJso.getJSONObject("payload");
+				throw new PubnubException(getErrorObject(PNERROBJ_FEATURE_NOT_ENABLED,
+						message, payload));
+			} catch (JSONException e2) {
+			}
+
+			throw new PubnubException(getErrorObject(PNERROBJ_FEATURE_NOT_ENABLED,
+					page));
+		}
 		case HttpURLConnection.HTTP_BAD_REQUEST: {
 			JSONObject payload = null;
 			String message = null;

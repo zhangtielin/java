@@ -207,6 +207,12 @@ public class PubnubError {
      *
      */
     public static final int         PNERR_CONNECTION_NOT_SET                     =       133;
+    
+    /**
+     * feature not enabled
+     *
+     */
+    public static final int         PNERR_FEATURE_NOT_ENABLED                    =       134;
 
     // Error Objects
 
@@ -431,6 +437,12 @@ public class PubnubError {
             new PubnubError     (
             PNERR_CONNECTION_NOT_SET ,
             "Pubnub Connection not set"
+    );
+    
+    static final PubnubError PNERROBJ_FEATURE_NOT_ENABLED                      =
+            new PubnubError     (
+            	PNERR_FEATURE_NOT_ENABLED ,
+            "Feature is not enabled"
     );
     
 
