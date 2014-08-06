@@ -14,7 +14,7 @@ public class PubnubApnsPush {
     public static void main(String[] args) {
         PubnubCrypto pc = new PubnubCrypto("abcd");
 
-        Pubnub pubnub = new Pubnub("pub-c-c077418d-f83c-4860-b213-2f6c77bde29a","sub-c-e8839098-f568-11e2-a11a-02ee2ddab7fe");
+        Pubnub pubnub = new Pubnub("pub-c-6d82cd87-cd15-461c-8de6-d0330419f439","sub-c-e0d8405a-b823-11e2-89ba-02ee2ddab7fe");
 
         /*
             {
@@ -48,13 +48,22 @@ public class PubnubApnsPush {
             apns.put("teams", teams);
             apns.put("score", score);
 
+
+            JSONObject aps = new JSONObject();
+
+            aps.put("alert", "Game update 49ers touchdown");
+            aps.put("badge", 2);
+
+            apns.put("aps", aps);
+
             jso.put("pn_apns", apns);
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        pubnub.publish("abcd", jso, new Callback(){
+        pubnub.publish("apns", jso, new Callback(){
             public void successCallback(String channel, Object response) {
                 System.out.println(response);
             }
@@ -62,6 +71,7 @@ public class PubnubApnsPush {
                 System.out.println(error);
             }
         });
+
 
     }
 
