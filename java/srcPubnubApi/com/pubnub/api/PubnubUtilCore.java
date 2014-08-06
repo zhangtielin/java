@@ -60,7 +60,7 @@ class PubnubUtilCore {
 
         return splittedList;
     }
-
+    
     /**
      * Takes String[] of tokens, and String delimiter as input and returns
      * joined String
@@ -72,13 +72,49 @@ class PubnubUtilCore {
      * @return String , string of tokens joined by delimiter
      */
     public static String joinString(String[] sourceArray, String delimiter) {
+    	return joinString(sourceArray, delimiter, 0, sourceArray.length - 1);
+    
+    }
+    
+    /**
+     * Takes String[] of tokens, and String delimiter as input and returns
+     * joined String
+     *
+     * @param sourceArray
+     *            , input tokens in String array
+     * @param delimiter
+     *            , delimiter to join on
+     * @param startIndex
+     * 			start index
+     * @return String , string of tokens joined by delimiter
+     */
+    public static String joinString(String[] sourceArray, String delimiter, int startIndex) {
+    	return joinString(sourceArray, delimiter, startIndex, sourceArray.length - 1);
+    
+    }
+
+    /**
+     * Takes String[] of tokens, and String delimiter as input and returns
+     * joined String
+     *
+     * @param sourceArray
+     *            , input tokens in String array
+     * @param delimiter
+     *            , delimiter to join on
+     * @param startIndex
+     * 			start index
+     * @param endIndex
+     * 			end index
+     * @return String , string of tokens joined by delimiter
+     */
+    public static String joinString(String[] sourceArray, String delimiter, int fromIndex, int toIndex) {
     	
     	if (sourceArray == null || delimiter == null) {
     		return "";
     	}
         StringBuffer sb = new StringBuffer();
 
-        for (int i = 0; i < sourceArray.length - 1; i++) {
+        for (int i = fromIndex; i <= toIndex; i++) {
             sb.append(sourceArray[i]).append(delimiter);
         }
         sb.append(sourceArray[sourceArray.length - 1]);

@@ -2472,7 +2472,14 @@ abstract class PubnubCore {
 	}
 
 	public PubnubSyncedObject createSyncObject(String objectId) {
-		PubnubSyncedObject o = new PubnubSyncedObject(objectId);
+		String[] arr = PubnubUtil.splitString(objectId, ".");
+		
+		PubnubSyncedObject o = null;
+		if (arr.length > 1) 
+			o  = new PubnubSyncedObject(arr[0]);
+		else {
+			o = new PubnubSyncedObject(arr[0], PubnubUtil.joinString( arr, ".", 1));
+		}
 		o.setPubnub(this);
 		o.setStale(true);
 
@@ -2483,5 +2490,6 @@ abstract class PubnubCore {
 		}
 		return o;
 	}
+
 
 }
