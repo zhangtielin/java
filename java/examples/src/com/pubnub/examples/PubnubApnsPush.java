@@ -24,7 +24,7 @@ public class PubnubApnsPush {
                         "badge": 2
                     },
                     "teams" : ["49ers", "raiders"],
-                    "score" : [7, 0]
+                    "score" : ["7", "0"]
                 },
                 "onlineMessage" : "this is message that should only be presented as online message"
             }
