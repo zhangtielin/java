@@ -2477,7 +2477,7 @@ abstract class PubnubCore {
 		PubnubSyncedObject o = null;
 		if (arr.length > 1) 
 			o  = new PubnubSyncedObject(arr[0]);
-		else {
+		else  if (arr.length > 1) {
 			o = new PubnubSyncedObject(arr[0], PubnubUtil.joinString( arr, ".", 1));
 		}
 		o.setPubnub(this);

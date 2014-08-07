@@ -114,10 +114,10 @@ class PubnubUtilCore {
     	}
         StringBuffer sb = new StringBuffer();
 
-        for (int i = fromIndex; i <= toIndex; i++) {
+        for (int i = fromIndex; i < toIndex; i++) {
             sb.append(sourceArray[i]).append(delimiter);
         }
-        sb.append(sourceArray[sourceArray.length - 1]);
+        sb.append(sourceArray[toIndex]);
 
         return sb.toString();
     }

@@ -82,7 +82,7 @@ public class PubnubSyncedObject extends JSONObject {
 		}
 	}
 
-	private void applyUpdate(JSONObject o, JSONObject update)
+	private String applyUpdate(JSONObject o, JSONObject update)
 			throws JSONException {
 		String location = update.getString("location");
 		String[] path = PubnubUtil.splitString(location, ".");
@@ -90,11 +90,15 @@ public class PubnubSyncedObject extends JSONObject {
 		String last = path[path.length - 1];
 		JSONObject x = o;
 		pathNodes[0] = o;
+		String updateAt = null;
 
 		for (int i = 1 + depth; i < path.length - 1; i++) {
 			String key = path[i];
 
 			if (getJSONObjectFromJSONObject(x, key) == null) {
+				if (updateAt == null) {
+					updateAt = PubnubUtil.joinString(path, ".", 0, i);
+				}
 				x.put(key, new JSONObject());
 			}
 			x = x.getJSONObject(key);
@@ -108,15 +112,20 @@ public class PubnubSyncedObject extends JSONObject {
 			for (int i = path.length - 2; i >= 2 + depth; i--) {
 				if (pathNodes[i] != null && pathNodes[i].length() == 0) {
 					pathNodes[i - 1].remove(path[i]);
+					updateAt = PubnubUtil.joinString(path, ".", 0, i - 1);
 				}
 			}
 
 			if (pathNodes[1 + depth] != null
-					&& pathNodes[1 + depth].length() == 0)
+					&& pathNodes[1 + depth].length() == 0) {
 				o.remove(path[1 + depth]);
+				updateAt = PubnubUtil.joinString(path, ".", 0, depth);
+			}
 		}
 		if (meta != null)
 			meta.put("last_update", update.getLong("timetoken"));
+		
+		return updateAt;
 
 	}
 
@@ -124,19 +133,25 @@ public class PubnubSyncedObject extends JSONObject {
 			DataSyncCallback dsCallback) throws JSONException {
 
 		JSONArray updatesArray = dst.updatesArray;
+		JSONArray locations = new JSONArray();
+		JSONObject cbData = new JSONObject();
+		String updateAt = "";
 
 		for (int i = 0; i < updatesArray.length(); i++) {
 			JSONObject update = (JSONObject) updatesArray.get(i);
-			applyUpdate(o, update);
+			updateAt = applyUpdate(o, update);
 			update.remove("trans_id");
 			update.remove("timetoken");
 			String location = getStringFromJSONObject(update, "location");
 			if (location != null) {
 				location = location.substring(6);
 				update.put("location", location);
+				locations.put(location);
 			}
 		}
 		((PubnubSyncedObject) o).setStale(false);
+		cbData.put("location", locations);
+		cbData.put("update_at", updateAt.substring(6));
 		if (dsCallback != null)
 			dsCallback.onUpdate(null);
 	}
